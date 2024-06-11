@@ -20,10 +20,10 @@ export default function RootLayout() {
     useEffect(() => {
         if (loaded) {
             SplashScreen.hideAsync();
-            /* // uncomment to see SignInUpScreen
+             // uncomment to see SignInUpScreen
              if (true) {
                  router.replace('sign');
-             }*/
+             }
         }
     }, [loaded]);
 
