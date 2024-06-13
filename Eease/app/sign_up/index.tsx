@@ -1,43 +1,31 @@
-import {Alert, Pressable, StyleSheet, Text, View} from "react-native";
-import {useState} from "react";
+import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import TextInputWithTitle from "@/components/sign_up/TextInputWithTitle";
-import {Select} from "@mobile-reality/react-native-select-pro";
+import { Select } from "@mobile-reality/react-native-select-pro";
+import { Gender, genders, Language, languages } from "@/constants/ProfileInfo";
+import { useSelector, useDispatch } from 'react-redux';
+import { setUser, RootState, isFilled, User } from '@/store/user-slice';
+import { useRouter } from "expo-router";
+import { useState } from "react";
 
 
-import {Gender, genders, Language, languages} from "@/constants/ProfileInfo";
-
-
-type userType = {
-    username?: string,
-    gender?: Gender,
-    age?: number,
-    language?: Language,
-    //location: Location?| undefined,
-    isFilled: () => boolean
-}
-
-const emptyUser: userType = {
-    isFilled(): boolean {
-        return this.username !== undefined &&
-            this.age !== undefined &&
-            this.gender !== undefined &&
-            this.language !== undefined;
-    }, username: '', age: undefined, gender: undefined, language: undefined,
-}
-
-const ages = Array.from({length: 100 - 18 + 1}, (v, i) => i + 18)
+const ages = Array.from({ length: 100 - 18 + 1 }, (v, i) => i + 18)
     .map(age => ({
         value: age.toString(),
         label: age.toString(),
     }));
 
 export default function SignUpScreen() {
-    const [user, setUser] = useState<userType>(emptyUser)
+    const user = useSelector((state: RootState) => state.user)
+    const dispatch = useDispatch();
+    const router = useRouter()
+    const [newUser, setNewUser] = useState({ ...user })
 
-    const handleSave = () => {
-        // Handle the save action, e.g., send the text to a server or save locally
-        if (user.isFilled()) {
-            // proceed
+
+    const next = () => {
+
+        if (isFilled(newUser)) {
+            dispatch(setUser(newUser))
+            router.replace("(tabs)")
         } else {
             showAlert()
         }
@@ -48,9 +36,9 @@ export default function SignUpScreen() {
             'Error',
             'You have to fill all the fields.',
             [
-                {text: 'OK'},
+                { text: 'OK' },
             ],
-            {cancelable: true},
+            { cancelable: true },
         )
     }
 
@@ -61,32 +49,31 @@ export default function SignUpScreen() {
 
             <TextInputWithTitle
                 title={"Username"}
-                value={user.username ?? ''}
-                onChangeValue={(username) => setUser({...user, username: username})}
-                placeholder={"Type your username here..."}/>
-
+                value={newUser.username ?? ''}
+                onChangeValue={(username) => setNewUser({ ...newUser, username: username })}
+                placeholder={"Type your username here..."} />
             <View>
                 <Text style={styles.label}>Gender:</Text>
                 <Select
-                    defaultOption={Gender.getValueLabel(user.gender)}
+                    defaultOption={Gender.getValueLabel(newUser.gender)}
                     options={genders}
                     onSelect={(value) => {
                         const gender = Gender.parse(value.value)
-                        setUser({...user, gender: gender})
+                        setNewUser({ ...newUser, gender: gender })
                     }}
                     placeholderText="Select your gender"
-                    clearable={false}/>
+                    clearable={false} />
             </View>
             <View>
                 <Text style={styles.label}> Age:</Text>
                 <Select
-                    defaultOption={user.age ? {value: user.age.toString(), label: user.age.toString()} : undefined}
+                    defaultOption={newUser.age ? { value: newUser.age.toString(), label: newUser.age.toString() } : undefined}
                     options={ages} onSelect={(value) => {
-                    const age = Number(value.value)
-                    setUser({...user, age: age})
-                }}
+                        const age = Number(value.value)
+                        setNewUser({ ...newUser, age: age })
+                    }}
                     placeholderText="Select your age"
-                    clearable={false}/>
+                    clearable={false} />
             </View>
             <View>
                 <Text style={styles.label}> Location:</Text>
@@ -96,25 +83,25 @@ export default function SignUpScreen() {
             <View>
                 <Text style={styles.label}> Language:</Text>
                 <Select
-                    defaultOption={Language.getValueLabel(user.language)}
+                    defaultOption={Language.getValueLabel(newUser.language)}
                     options={languages}
                     placeholderText="Select your language"
                     searchable={true}
                     onSelect={(value) => {
                         const language = Language.parse(value.value)
-                        setUser({...user, language: language})
+                        setNewUser({ ...newUser, language: language })
                     }}
                 />
             </View>
 
-            <View style={{flex: 1}}></View>
-            <Pressable style={({pressed}) => [
+            <View style={{ flex: 1 }}></View>
+            <Pressable style={({ pressed }) => [
                 {
                     backgroundColor: pressed ? 'rgba(111,125,199,0.55)' : '#6f7dc7',
                 },
                 styles.button,
             ]}
-                       onPress={handleSave}>
+                onPress={next}>
                 <Text style={styles.buttonText}>Next</Text>
             </Pressable>
         </View>

@@ -4,7 +4,5 @@ import SignInUpScreen from "@/app/sign/index";
 
 
 export default function SignLayout() {
-    const colorScheme = useColorScheme();
-
     return <SignInUpScreen/>;
 }
