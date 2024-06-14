@@ -1,14 +1,9 @@
-import { RootState } from '@/store/user-slice';
 import { View, Text, StyleSheet } from 'react-native';
-import { useSelector } from 'react-redux';
 
-export default function Home() {
-  const user = useSelector((state: RootState) => state.user)
-
+export default function Connections() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
-      <Text>Hi, {user.username}!</Text>
+      <Text style={styles.title}>Connections</Text>
     </View>
   )
 }

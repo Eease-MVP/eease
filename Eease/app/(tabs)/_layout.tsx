@@ -24,13 +24,32 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="explore"
+        name="health-tracking"
         options={{
-          title: 'Explore',
+          title: 'Health tracking',
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
+            <TabBarIcon name={focused ? 'stats-chart' : 'stats-chart-outline'} color={color} />
           ),
         }}
+      />
+      <Tabs.Screen
+        name='connections'
+        options={{
+          title: 'Connections',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'git-branch' : 'git-branch-outline'} color={color} />
+          )
+        }}
+      />
+      <Tabs.Screen
+        name='profile'
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? 'person-circle' : 'person-circle-outline'} color={color} />
+          ),
+        }}
+
       />
     </Tabs>
   );

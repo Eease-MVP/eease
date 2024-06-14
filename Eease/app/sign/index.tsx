@@ -1,4 +1,4 @@
-import {ImageBackground, StyleSheet} from "react-native";
+import { ImageBackground, StyleSheet } from "react-native";
 import AppTitle from "../../components/sign/AppTitle";
 import RecGallery from "../../components/sign/RecGallery";
 import SignInUpButtons from "../../components/sign/SignInUpButtons";
@@ -9,9 +9,9 @@ const background = require('../../assets/images/background.jpg');
 export default function SignInUpScreen() {
     return (
         <ImageBackground source={background} style={styles.background}>
-            <AppTitle/>
-            <RecGallery/>
-            <SignInUpButtons/>
+            <AppTitle />
+            <RecGallery />
+            <SignInUpButtons />
         </ImageBackground>
     );
 }
