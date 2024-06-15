@@ -2,9 +2,13 @@ import { Alert, Pressable, StyleSheet, Text, View } from "react-native"
 import { useState } from "react"
 import TextInputWithTitle from "@/components/sign_up/TextInputWithTitle"
 import { Select } from "@mobile-reality/react-native-select-pro"
+import { useSelector, useDispatch } from "react-redux"
+import { useRouter } from "expo-router"
+import { setUser, RootState, isFilled, User } from "@/store/user-slice"
 import { TouchableOpacity } from "react-native"
-import { Gender, genders, Language, languages } from "@/constants/ProfileInfo"
 import { Link, useNavigation } from "expo-router"
+
+import { Gender, genders, Language, languages } from "@/constants/ProfileInfo"
 
 type userType = {
   username?: string
@@ -38,15 +42,18 @@ const ages = Array.from({ length: 100 - 18 + 1 }, (v, i) => i + 18).map(
 )
 
 export default function SignUpScreen() {
-  const [user, setUser] = useState<userType>(emptyUser)
+  const user = useSelector((state: RootState) => state.user)
+  const dispatch = useDispatch()
+  const router = useRouter()
+  const [newUser, setNewUser] = useState({ ...user })
   const [toggleCheckBoxTerms, setToggleCheckBoxTerms] = useState(false)
   const [toggleCheckBoxNewsletter, setToggleCheckBoxNewsletter] =
     useState(false)
 
-  const handleSave = () => {
-    // Handle the save action, e.g., send the text to a server or save locally
-    if (user.isFilled() && toggleCheckBoxTerms) {
-      // proceed
+  const next = () => {
+    if (isFilled(newUser)) {
+      dispatch(setUser(newUser))
+      router.replace("(tabs)")
     } else {
       showAlert()
     }
@@ -57,9 +64,7 @@ export default function SignUpScreen() {
       "Error",
       "You have to fill all the fields and agree to the terms and conditions.",
       [{ text: "OK" }],
-      {
-        cancelable: true,
-      }
+      { cancelable: true }
     )
   }
 
@@ -69,19 +74,20 @@ export default function SignUpScreen() {
 
       <TextInputWithTitle
         title={"Username"}
-        value={user.username ?? ""}
-        onChangeValue={(username) => setUser({ ...user, username: username })}
+        value={newUser.username ?? ""}
+        onChangeValue={(username) =>
+          setNewUser({ ...newUser, username: username })
+        }
         placeholder={"Type your username here..."}
       />
-
       <View>
         <Text style={styles.label}>Gender:</Text>
         <Select
-          defaultOption={Gender.getValueLabel(user.gender)}
+          defaultOption={Gender.getValueLabel(newUser.gender)}
           options={genders}
           onSelect={(value) => {
             const gender = Gender.parse(value.value)
-            setUser({ ...user, gender: gender })
+            setNewUser({ ...newUser, gender: gender })
           }}
           placeholderText="Select your gender"
           clearable={false}
@@ -91,14 +97,14 @@ export default function SignUpScreen() {
         <Text style={styles.label}> Age:</Text>
         <Select
           defaultOption={
-            user.age
-              ? { value: user.age.toString(), label: user.age.toString() }
+            newUser.age
+              ? { value: newUser.age.toString(), label: newUser.age.toString() }
               : undefined
           }
           options={ages}
           onSelect={(value) => {
             const age = Number(value.value)
-            setUser({ ...user, age: age })
+            setNewUser({ ...newUser, age: age })
           }}
           placeholderText="Select your age"
           clearable={false}
@@ -112,34 +118,17 @@ export default function SignUpScreen() {
       <View>
         <Text style={styles.label}> Language:</Text>
         <Select
-          defaultOption={Language.getValueLabel(user.language)}
+          defaultOption={Language.getValueLabel(newUser.language)}
           options={languages}
           placeholderText="Select your language"
           searchable={true}
           onSelect={(value) => {
             const language = Language.parse(value.value)
-            setUser({ ...user, language: language })
+            setNewUser({ ...newUser, language: language })
           }}
         />
       </View>
 
-      <View style={styles.checkboxContainer}>
-        <TouchableOpacity
-          style={styles.checkBox}
-          onPress={() => setToggleCheckBoxTerms(!toggleCheckBoxTerms)}
-        >
-          {toggleCheckBoxTerms && <Text>✓</Text>}
-        </TouchableOpacity>
-        <Text style={styles.checkboxText}>
-          I agree to the{" "}
-          <Link href="/sign_up/termsPage" asChild={true}>
-            <Pressable>
-              <Text style={styles.underlineText}>terms and conditions</Text>
-            </Pressable>
-          </Link>
-          {/* <Text style={styles.underlineText}>terms and conditions</Text> */}
-        </Text>
-      </View>
       <View style={styles.checkboxContainer}>
         <TouchableOpacity
           style={styles.checkBox}
@@ -151,7 +140,6 @@ export default function SignUpScreen() {
           I want to receive the newsletter
         </Text>
       </View>
-
       <View style={{ flex: 1 }}></View>
       <Pressable
         style={({ pressed }) => [
@@ -160,7 +148,7 @@ export default function SignUpScreen() {
           },
           styles.button,
         ]}
-        onPress={handleSave}
+        onPress={next}
       >
         <Text style={styles.buttonText}>Next</Text>
       </Pressable>
