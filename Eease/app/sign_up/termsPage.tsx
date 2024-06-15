@@ -1,67 +1,97 @@
+import { useNavigation } from "expo-router"
 import React, { useState } from "react"
 import { StyleSheet, Text, View, Button, Linking } from "react-native"
+import { TouchableOpacity } from "react-native"
 
 export default function TermsPage() {
   const [isSelected, setSelection] = useState(false)
+  const navigation = useNavigation()
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Meela</Text>
 
       <View style={styles.infoContainer}>
-        <Text style={styles.heading}>Läs gärna informationen noggrant</Text>
-
-        <Text style={styles.sectionTitle}>
-          1. Meela förmedlar enbart privat terapi
-        </Text>
-        <Text style={styles.text}>
-          Meela är inte kopplat till det svenska offentliga vårdsystemet. En
-          privat terapisession kostar 800-1300 kr.
+        <Text style={styles.heading}>
+          Please read the information carefully
         </Text>
 
         <Text style={styles.sectionTitle}>
-          2. Meela kan inte hjälpa personer med allvarliga psykiska sjukdomar,
-          och är inte en räddningstjänst
+          1. Meela only provides private therapy
         </Text>
         <Text style={styles.text}>
-          Om du har en allvarlig psykisk sjukdom* råder vi dig att kontakta
-          närmsta vårdcentral. Vid livsfarlig fara, kontakta:
+          Meela is not connected to the Swedish public healthcare system. A
+          private therapy session costs 800-1300 SEK.
+        </Text>
+
+        <Text style={styles.sectionTitle}>
+          2. Meela cannot help individuals with severe mental illnesses, and is
+          not an emergency service
+        </Text>
+        <Text style={styles.text}>
+          If you have a severe mental illness*, we advise you to contact your
+          nearest healthcare center. In case of life-threatening danger,
+          contact:
         </Text>
         <Text style={styles.link} onPress={() => Linking.openURL("tel:112")}>
-          SOS Alarm - ring 112
+          SOS Alarm - call 112
         </Text>
         <Text style={styles.link} onPress={() => Linking.openURL("tel:90101")}>
-          Mind Självmordslinje - ring 90101
+          Mind Suicide Hotline - call 90101
         </Text>
         <Text
           style={styles.link}
           onPress={() => Linking.openURL("https://chat.mind.se/")}
         >
-          Mind Självmordslinje Chatt
+          Mind Suicide Hotline Chat
         </Text>
         <Text style={styles.note}>
-          *Exempelvis personlighetsstörning, psykotisk störning och annan svår
-          psykisk sjukdom.
+          *For example, personality disorder, psychotic disorder, and other
+          severe mental illnesses.
         </Text>
+        <View style={styles.line} />
+        <View style={styles.checkboxContainer}>
+          <TouchableOpacity
+            style={styles.checkbox}
+            onPress={() => setSelection(!isSelected)}
+          >
+            {isSelected && <Text>✓</Text>}
+          </TouchableOpacity>
+          <Text style={styles.checkboxLabel}>
+            I have read and understand the information above.
+          </Text>
+        </View>
       </View>
 
-      <View style={styles.checkboxContainer}>
-        <Text style={styles.checkboxLabel}>
-          Jag har läst och förstår informationen ovan.
-        </Text>
-      </View>
-
-      <Button
-        title="Nästa"
+      {/* <Button
+        title="Next"
         onPress={() => {
           if (isSelected) {
             // handle navigation
+            navigation.goBack()
           } else {
-            alert("Du måste läsa och förstå informationen ovan.")
+            alert("You must read and understand the information above.")
           }
         }}
         disabled={!isSelected}
-      />
+      /> */}
+      <TouchableOpacity
+        style={[styles.button, !isSelected && styles.buttonDisabled]}
+        onPress={() => {
+          if (isSelected) {
+            navigation.goBack() // Navigerar tillbaka till föregående vy
+          } else {
+            alert("You must read and understand the information above.")
+          }
+        }}
+        disabled={!isSelected}
+      >
+        <Text
+          style={[styles.buttonText, isSelected && styles.buttonTextSelected]}
+        >
+          Next
+        </Text>
+      </TouchableOpacity>
     </View>
   )
 }
@@ -116,9 +146,38 @@ const styles = StyleSheet.create({
   },
   checkbox: {
     alignSelf: "center",
+    width: 20,
+    height: 20,
+    borderRadius: 5,
+    borderWidth: 1,
+    borderColor: "#000",
   },
   checkboxLabel: {
     marginLeft: 8,
     fontSize: 14,
+  },
+  line: {
+    borderBottomColor: "#ccc",
+    borderBottomWidth: 1,
+    marginVertical: 10,
+  },
+  button: {
+    backgroundColor: "#ffffff",
+    paddingVertical: 15,
+    paddingHorizontal: 25,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  buttonDisabled: {
+    backgroundColor: "#e0e0e0",
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#d3d3d3",
+  },
+  buttonTextSelected: {
+    color: "#000000",
   },
 })

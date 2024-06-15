@@ -45,7 +45,7 @@ export default function SignUpScreen() {
 
   const handleSave = () => {
     // Handle the save action, e.g., send the text to a server or save locally
-    if (user.isFilled()) {
+    if (user.isFilled() && toggleCheckBoxTerms) {
       // proceed
     } else {
       showAlert()
@@ -53,9 +53,14 @@ export default function SignUpScreen() {
   }
 
   const showAlert = () => {
-    Alert.alert("Error", "You have to fill all the fields.", [{ text: "OK" }], {
-      cancelable: true,
-    })
+    Alert.alert(
+      "Error",
+      "You have to fill all the fields and agree to the terms and conditions.",
+      [{ text: "OK" }],
+      {
+        cancelable: true,
+      }
+    )
   }
 
   return (
