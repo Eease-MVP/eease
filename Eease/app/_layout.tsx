@@ -8,6 +8,7 @@ import 'react-native-reanimated';
 import {useColorScheme} from '@/hooks/useColorScheme';
 import {SelectProvider} from "@mobile-reality/react-native-select-pro";
 import SignInUpScreen from "@/app/sign";
+import PreferencesLayout from './preferences/_layout';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -22,10 +23,10 @@ export default function RootLayout() {
     useEffect(() => {
         if (loaded) {
             SplashScreen.hideAsync();
-            /* // uncomment to see SignInUpScreen
+             // uncomment to see SignInUpScreen
              if (true) {
                  router.replace('sign');
-             }*/
+             }
         }
     }, [loaded]);
 
@@ -41,6 +42,7 @@ export default function RootLayout() {
                     <Stack.Screen name="+not-found"/>
                     <Stack.Screen name="sign" options={{headerShown: false}}/>
                     <Stack.Screen name="sign_up" options={{title: "Sign Up"}}/>
+                    <Stack.Screen name="preferences" options={{title:"PreferenceScreen"}}/>
                 </Stack>
             </ThemeProvider>
         </SelectProvider>
