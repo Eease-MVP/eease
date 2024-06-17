@@ -6,8 +6,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { useRouter } from "expo-router"
 import { setUser, RootState, isFilled, User } from "@/store/user-slice"
 import { TouchableOpacity } from "react-native"
-import { Link, useNavigation } from "expo-router"
-
+import { Link } from "expo-router"
 import { Gender, genders, Language, languages } from "@/constants/ProfileInfo"
 
 type userType = {
@@ -51,7 +50,7 @@ export default function SignUpScreen() {
     useState(false)
 
   const next = () => {
-    if (isFilled(newUser)) {
+    if (isFilled(newUser) && toggleCheckBoxTerms) {
       dispatch(setUser(newUser))
       router.replace("(tabs)")
     } else {
@@ -140,6 +139,27 @@ export default function SignUpScreen() {
           I want to receive the newsletter
         </Text>
       </View>
+
+      <View style={styles.checkboxContainer}>
+        <TouchableOpacity
+          style={styles.checkBox}
+          onPress={() => setToggleCheckBoxTerms(!toggleCheckBoxTerms)}
+        >
+          {toggleCheckBoxTerms && <Text>✓</Text>}
+        </TouchableOpacity>
+        <Text style={styles.checkboxText}>
+          I agree to the{" "}
+          <Link href="/sign_up/termsPage" asChild={true}>
+            <Pressable>
+              <Text style={styles.underlineText}>terms and conditions</Text>
+            </Pressable>
+          </Link>
+          {/* <Link href="/termsPage" style={styles.underlineText}>
+            terms and conditions
+          </Link> */}
+        </Text>
+      </View>
+
       <View style={{ flex: 1 }}></View>
       <Pressable
         style={({ pressed }) => [

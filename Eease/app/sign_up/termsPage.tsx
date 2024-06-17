@@ -63,18 +63,6 @@ export default function TermsPage() {
         </View>
       </View>
 
-      {/* <Button
-        title="Next"
-        onPress={() => {
-          if (isSelected) {
-            // handle navigation
-            navigation.goBack()
-          } else {
-            alert("You must read and understand the information above.")
-          }
-        }}
-        disabled={!isSelected}
-      /> */}
       <TouchableOpacity
         style={[styles.button, !isSelected && styles.buttonDisabled]}
         onPress={() => {
