@@ -1,9 +1,14 @@
 import { View, Text, StyleSheet } from 'react-native';
+import UserInfo from "../../components/profile_page/UserInfo"
 
 export default function Profile() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Profile</Text>
+
+      <View>
+        <UserInfo />
+      </View>
     </View>
   )
 }
