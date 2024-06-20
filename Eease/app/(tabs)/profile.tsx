@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
-import UserInfo from "../../components/profile_page/UserInfo"
+import UserInfo from '@/components/profile_page/UserInfo';
+import UserInfoDisplay from '@/components/profile_page/UserInfoDisplay';
 
 export default function Profile() {
   return (
@@ -8,6 +9,7 @@ export default function Profile() {
 
       <View>
         <UserInfo />
+        <UserInfoDisplay />
       </View>
     </View>
   )
