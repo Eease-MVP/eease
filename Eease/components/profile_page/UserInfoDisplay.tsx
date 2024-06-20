@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#C7C7C7",
         borderRadius: 15,
         padding: 15,
-        width: "100%",
+        width: "80%"
     },
     editInfoText: {
         textAlign: "center",
