@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store/user-slice';
 import { setUser } from '@/store/user-slice';
@@ -17,13 +17,24 @@ export default function UserInfoDisplay() {
 
     const handleEditToggle = () => {
         if (isEditing) {
+            // Validation checks
+            if (!editedUser.username || !editedUser.age || !editedUser.gender || !editedUser.language) {
+                Alert.alert('Error', 'All fields are required.');
+                return;
+            }
+            const age = parseInt(editedUser.age);
+            if (isNaN(age) || age < 18) {
+                Alert.alert('Error', 'You must be over the ag of 18');
+                return;
+            }
+
             dispatch(setUser({
                 ...editedUser,
-                age: parseInt(editedUser.age) // Ensure age is stored as a number
+                age: age 
             }));
         }
         setIsEditing(!isEditing);
-        Keyboard.dismiss(); // Dismiss the keyboard
+        Keyboard.dismiss(); 
     };
 
     const handleInputChange = (field: string, value: string) => {
@@ -38,7 +49,7 @@ export default function UserInfoDisplay() {
             language: user.language || ''
         });
         setIsEditing(false);
-        Keyboard.dismiss(); // Dismiss the keyboard
+        Keyboard.dismiss(); 
     };
 
     return (
@@ -48,18 +59,18 @@ export default function UserInfoDisplay() {
                     {isEditing ? (
                         <View>
                             <View style={styles.inline}>
-                                <Text style={styles.label}>Username:</Text>
+                                <Text style={styles.label}>Username: *</Text>
                                 <TextInput
                                     style={styles.input}
                                     value={editedUser.username}
                                     onChangeText={(text) => handleInputChange('username', text)}
                                     returnKeyType="done"
                                     blurOnSubmit={true}
-                                    onSubmitEditing={Keyboard.dismiss} // Dismiss the keyboard when "Done" is pressed
+                                    onSubmitEditing={Keyboard.dismiss} 
                                 />
                             </View>
                             <View style={styles.inline}>
-                                <Text style={styles.label}>Age:</Text>
+                                <Text style={styles.label}>Age: *</Text>
                                 <TextInput
                                     style={styles.input}
                                     value={editedUser.age}
@@ -67,29 +78,29 @@ export default function UserInfoDisplay() {
                                     keyboardType="numeric"
                                     returnKeyType="done"
                                     blurOnSubmit={true}
-                                    onSubmitEditing={Keyboard.dismiss} // Dismiss the keyboard when "Done" is pressed
+                                    onSubmitEditing={Keyboard.dismiss} 
                                 />
                             </View>
                             <View style={styles.inline}>
-                                <Text style={styles.label}>Gender:</Text>
+                                <Text style={styles.label}>Gender: *</Text>
                                 <TextInput
                                     style={styles.input}
                                     value={editedUser.gender}
                                     onChangeText={(text) => handleInputChange('gender', text)}
                                     returnKeyType="done"
                                     blurOnSubmit={true}
-                                    onSubmitEditing={Keyboard.dismiss} // Dismiss the keyboard when "Done" is pressed
+                                    onSubmitEditing={Keyboard.dismiss} 
                                 />
                             </View>
                             <View style={styles.inline}>
-                                <Text style={styles.label}>Language:</Text>
+                                <Text style={styles.label}>Language: *</Text>
                                 <TextInput
                                     style={styles.input}
                                     value={editedUser.language}
                                     onChangeText={(text) => handleInputChange('language', text)}
                                     returnKeyType="done"
                                     blurOnSubmit={true}
-                                    onSubmitEditing={Keyboard.dismiss} // Dismiss the keyboard when "Done" is pressed
+                                    onSubmitEditing={Keyboard.dismiss} 
                                 />
                             </View>
                             <View style={styles.buttonContainer}>
