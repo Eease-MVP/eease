@@ -8,6 +8,7 @@ export default function UserInfoDisplay() {
     return (
         <View style={styles.container}>
             <View>
+                <Text style={styles.userInfoDisplay}>Username: {user.username}</Text>
                 <Text style={styles.userInfoDisplay}>Age: {user.age}</Text>
                 <Text style={styles.userInfoDisplay}>Gender: {user.gender}</Text>
                 <Text style={styles.userInfoDisplay}>Language: {user.language}</Text>

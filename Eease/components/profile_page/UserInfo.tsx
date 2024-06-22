@@ -11,7 +11,7 @@ export default function UserInfo() {
                 <View style={styles.nameContainer}>
                     <Text style={styles.nameDisplay}>{user.username}</Text>
                 </View>
-                <Text style={styles.editInfo}>Change my information</Text>
+                {/* <Text style={styles.editInfo}>Change my information</Text> */}
             </View>
             <View style={styles.innerContainer}>
                 <View style={styles.profilePicContainer}>
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
         width: "100%"
     },
     nameDisplay: {
-        fontSize: 20,
+        fontSize: 22,
         textAlign: "center",
     },
     editInfo: {
