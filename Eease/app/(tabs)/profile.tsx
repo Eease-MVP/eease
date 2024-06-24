@@ -2,6 +2,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import UserInfo from '@/components/profile_page/UserInfo';
 import UserInfoDisplay from '@/components/profile_page/UserInfoDisplay';
 import ProfileNav from '@/components/profile_page/ProfileNav';
+import EditPreferences from '@/components/profile_page/EditPreferences';
 
 export default function Profile() {
   return (
@@ -9,6 +10,7 @@ export default function Profile() {
         <ProfileNav />
         <UserInfo />
         <UserInfoDisplay />
+        <EditPreferences />
     </View>
   )
 }
