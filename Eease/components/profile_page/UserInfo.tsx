@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/user-slice';
+import UploadProfilePic from "./UploadProfilePic";
 
 export default function UserInfo() {
     const user = useSelector((state: RootState) => state.user)
@@ -15,8 +16,7 @@ export default function UserInfo() {
             </View>
             <View style={styles.innerContainer}>
                 <View style={styles.profilePicContainer}>
-                    {/* profile pic */}
-                    <Text>Change</Text>
+                    <UploadProfilePic />
                 </View>
             </View>
         </View>
