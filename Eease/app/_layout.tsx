@@ -9,8 +9,11 @@ import * as SplashScreen from "expo-splash-screen"
 import { useEffect } from "react"
 import "react-native-reanimated"
 
-import { useColorScheme } from "@/hooks/useColorScheme"
 import { SelectProvider } from "@mobile-reality/react-native-select-pro"
+import SignInUpScreen from "@/app/sign"
+import PreferencesLayout from "./preferences/_layout"
+import { useColorScheme } from "@/hooks/useColorScheme"
+import { useRouter } from "expo-router"
 
 import ReduxProvider from "../store/store"
 
@@ -26,10 +29,15 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
   })
+  const router = useRouter()
 
   useEffect(() => {
     if (loaded) {
-      SplashScreen.hideAsync()
+      SplashScreen.hideAsync().then(()=>{
+      // Uncomment to see SignInUpScreen
+      
+        router.replace("sign")
+      })
     }
   }, [loaded])
 
@@ -40,14 +48,13 @@ export default function RootLayout() {
   return (
     <ReduxProvider>
       <SelectProvider>
-        <ThemeProvider
-          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-        >
+        <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
           <Stack initialRouteName="sign/index">
-            <Stack.Screen name="sign" options={{ headerShown: false }} />
-            <Stack.Screen name="sign_up" options={{ title: "Sign Up" }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" />
+            <Stack.Screen name="sign" options={{ headerShown: false }} />
+            <Stack.Screen name="sign_up" options={{ title: "Sign Up" }} />
+            <Stack.Screen name="sign_up/ReceptorPreferences"  options={{ title: "Receptor Preferences" }} />
           </Stack>
         </ThemeProvider>
       </SelectProvider>

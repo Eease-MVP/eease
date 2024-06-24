@@ -52,7 +52,7 @@ export default function SignUpScreen() {
   const next = () => {
     if (isFilled(newUser) && toggleCheckBoxTerms) {
       dispatch(setUser(newUser))
-      router.replace("(tabs)")
+      router.push("sign_up/ReceptorPreferences");
     } else {
       showAlert()
     }
