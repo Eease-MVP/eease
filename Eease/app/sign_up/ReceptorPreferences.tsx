@@ -24,10 +24,12 @@ const ReceptorPreferences = () => {
       Alert.alert("Error", "Please fill all the fields.")
       return
     }
+    console.log("preferences saved:", {preferredAgeGap, preferredGender, cityToAvoid})
+    Alert.alert("preferences saved", "Your preferences have been saved successfully")
 
     // Save preferences logic here
 
-    router.replace("(tabs)") // Navigate to the main tab screen after saving preferences
+    router.push("payment_ui/PaymentScreen"); // Navigate to the main tab screen after saving preferences
   }
 
   return (
