@@ -14,22 +14,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @Configuration
 class SecurityConfig(
-    private val authenticationProvider: AuthenticationProvider
+    private val authenticationProvider: AuthenticationProvider,
 ) {
     @Bean
     fun securityFilterChain(
         http: HttpSecurity,
         jwtAuthenticationFilter: JwtAuthenticationFilter,
     ): SecurityFilterChain = with(http) {
+        //  uncomment in order to be able to access H2 console through http://localhost:8080/h2-console/
+        //  headers { headers -> headers.frameOptions(Customizer.withDefaults()).disable() }
+
         csrf { csrf -> csrf.disable() }
         authorizeHttpRequests { authorize ->
-            authorize.requestMatchers("api/auth/*",).permitAll()
+            authorize.requestMatchers("api/auth/*", "/h2-console/**").permitAll()
 
-            authorize.anyRequest().apply {
-                authenticated()
-                //fullyAuthenticated() ???
-                // here ? sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            }
+            authorize.anyRequest().fullyAuthenticated()
         }
         // or here?
         sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
@@ -37,5 +36,4 @@ class SecurityConfig(
         addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
     }
         .build()
-
 }
