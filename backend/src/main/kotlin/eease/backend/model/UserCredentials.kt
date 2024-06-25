@@ -13,11 +13,11 @@ class UserCredentials(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
     var email: String,
-    var password: String,
+    var hashedPassword: String,
     var salt: String,
 ) {
     override fun toString(): String {
-        return "email: $email, password: $password, salt: $salt"
+        return "email: $email, password: $hashedPassword, salt: $salt"
     }
 
     companion object {
@@ -30,7 +30,7 @@ class UserCredentials(
     }
 }
 
-interface UserRepository : JpaRepository<UserCredentials, Long> {
+interface UserCredentialsRepository : JpaRepository<UserCredentials, Long> {
     fun findUserCredentialsByEmailIgnoreCase(email: String): UserCredentials?
 }
 

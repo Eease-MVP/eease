@@ -1,6 +1,6 @@
 package eease.backend.security
 
-import eease.backend.model.UserRepository
+import eease.backend.model.UserCredentialsRepository
 import eease.backend.service.EeaseUserDetailsService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -8,10 +8,12 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 
+@EnableWebSecurity
 @Configuration
 class Configuration {
 
@@ -21,15 +23,15 @@ class Configuration {
     }
 
     @Bean
-    fun userDetailsService(userRepository: UserRepository): UserDetailsService = EeaseUserDetailsService(userRepository)
+    fun userDetailsService(userCredentialsRepository: UserCredentialsRepository): UserDetailsService = EeaseUserDetailsService(userCredentialsRepository)
 
     @Bean
-    fun authenticationProvider(userRepository: UserRepository): AuthenticationProvider =
+    fun authenticationProvider(
+        userDetailsService: UserDetailsService): AuthenticationProvider =
         DaoAuthenticationProvider()
             .apply {
-                setUserDetailsService(EeaseUserDetailsService(userRepository))
+                setUserDetailsService(userDetailsService)
                 setPasswordEncoder(passwordEncoder())
-                sal
             }
 
     @Bean

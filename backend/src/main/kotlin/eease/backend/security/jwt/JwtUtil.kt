@@ -1,21 +1,22 @@
-package eease.backend.security
+package eease.backend.security.jwt
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.util.*
 
 @Component
 class JwtUtil(
-    jwtProperties: JwtProperties,
+    private val jwtProperties: JwtProperties,
 ) {
     private val secretKey = Keys.hmacShaKeyFor(jwtProperties.key.toByteArray())
 
     fun generate(
         email: String,
-        expirationDate: Date,
+        expirationDate: Date = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration),
         additionalClaims: Map<String, Any> = emptyMap(),
     ): String = Jwts.builder()
         .claims()
@@ -48,3 +49,9 @@ class JwtUtil(
             .payload
     }
 }
+
+@ConfigurationProperties("jwt")
+data class JwtProperties(
+    val key: String,
+    val accessTokenExpiration: Long,
+)

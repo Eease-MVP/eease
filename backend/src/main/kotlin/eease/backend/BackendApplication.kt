@@ -1,6 +1,6 @@
 package eease.backend
 
-import eease.backend.security.JwtProperties
+import eease.backend.security.jwt.JwtProperties
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication

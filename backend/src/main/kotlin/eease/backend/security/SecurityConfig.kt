@@ -1,5 +1,6 @@
 package eease.backend.security
 
+import eease.backend.security.jwt.JwtAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationProvider
@@ -22,7 +23,7 @@ class SecurityConfig(
     ): SecurityFilterChain = with(http) {
         csrf { csrf -> csrf.disable() }
         authorizeHttpRequests { authorize ->
-            authorize.requestMatchers("api/auth", "api/register", "api/users/**").permitAll()
+            authorize.requestMatchers("api/auth/*",).permitAll()
 
             authorize.anyRequest().apply {
                 authenticated()
