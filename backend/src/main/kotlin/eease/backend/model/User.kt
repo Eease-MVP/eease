@@ -26,13 +26,11 @@ class UserPrefs(
     var id: Long? = null,
     var ageFrom: Int,
     var ageTo: Int,
-    @ElementCollection(targetClass = Gender::class)
-    @CollectionTable(name = "user_prefs_genders", joinColumns = [JoinColumn(name = "user_prefs_id")])
-    @Enumerated(EnumType.STRING)
-    var genders: List<Gender>,
+    @Convert(converter = GenderConverter::class)
+    var genders: Set<Gender>,
 
-    @ElementCollection(targetClass = String::class)
-    var placesToAvoid: List<String>
+    @Convert(converter = PlacesConverter::class)
+    var placesToAvoid: Set<String>,
 )
 
 
@@ -43,6 +41,28 @@ enum class Gender(val value: String) {
     TRANSGENDER("Transgender");
 }
 
+@Converter
+private class GenderConverter : AttributeConverter<Set<Gender>, String> {
+
+    override fun convertToDatabaseColumn(attribute: Set<Gender>?): String {
+        return attribute?.joinToString(",") { it.name } ?: ""
+    }
+
+    override fun convertToEntityAttribute(dbData: String?): Set<Gender> {
+        return dbData?.split(",")?.map { Gender.valueOf(it) }?.toSet() ?: emptySet()
+    }
+}
+
+@Converter
+private class PlacesConverter : AttributeConverter<Set<String>, String> {
+    override fun convertToDatabaseColumn(attribute: Set<String>?): String {
+        return attribute?.joinToString(",") ?: ""
+    }
+
+    override fun convertToEntityAttribute(dbData: String?): Set<String> {
+        return dbData?.split(",")?.map { it }?.toSet() ?: emptySet()
+    }
+}
 
 @Repository
 interface UserRepository : JpaRepository<User, Long>
