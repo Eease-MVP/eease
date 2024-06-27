@@ -12,14 +12,15 @@ import org.springframework.stereotype.Service
 
 
 @Service
-interface UserService{
+interface UserService {
     fun getCurrentUser(): ResponseEntity<User>
     fun saveUser(userReq: UserReq)
 }
+
 @Service
 class EeaseUserService(
     private val userRepository: UserRepository,
-): UserService {
+) : UserService {
 
     override fun getCurrentUser(): ResponseEntity<User> {
         val authentication = SecurityContextHolder.getContext().authentication
@@ -33,22 +34,23 @@ class EeaseUserService(
         val authentication = SecurityContextHolder.getContext().authentication
         val id = authentication.credentials as? Long ?: return
 
-        val userPrefs = UserPrefs(
-            id = id,
-            ageFrom = userReq.userPrefs.ageFrom,
-            ageTo = userReq.userPrefs.ageTo,
-            genders = userReq.userPrefs.genders,
-            placesToAvoid = userReq.userPrefs.placesToAvoid
-        )
+        val user = userReq.asEntity(id = id)
 
-        val user = User(
-            id = id,
-            name = userReq.name,
-            gender = userReq.gender,
-            birthYear = userReq.birthYear,
-            language = userReq.language,
-            userPrefs = userPrefs
-        )
         userRepository.save(user)
     }
 }
+
+private fun UserReq.asEntity(id: Long) = User(
+    id = id,
+    name = name,
+    gender = gender,
+    birthDate = birthDate,
+    languages = languages,
+    userPrefs = UserPrefs(
+        id = id,
+        ageFrom = userPrefs.ageFrom,
+        ageTo = userPrefs.ageTo,
+        genders = userPrefs.genders,
+        placesToAvoid = userPrefs.placesToAvoid
+    )
+)

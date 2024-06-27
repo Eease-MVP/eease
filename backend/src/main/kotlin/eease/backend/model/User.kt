@@ -3,6 +3,7 @@ package eease.backend.model
 import jakarta.persistence.*
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
+import java.time.LocalDate
 
 @Entity
 @Table(name = "users")
@@ -12,8 +13,9 @@ class User(
     var name: String,
     @Enumerated(EnumType.STRING)
     var gender: Gender,
-    var birthYear: Int,
-    var language: String,
+    var birthDate: LocalDate,
+    @Convert(converter = ListConverter::class)
+    var languages: Set<String>,
     @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "user_prefs_id", referencedColumnName = "id")
     var userPrefs: UserPrefs,
@@ -29,7 +31,7 @@ class UserPrefs(
     @Convert(converter = GenderConverter::class)
     var genders: Set<Gender>,
 
-    @Convert(converter = PlacesConverter::class)
+    @Convert(converter = ListConverter::class)
     var placesToAvoid: Set<String>,
 )
 
@@ -54,7 +56,7 @@ private class GenderConverter : AttributeConverter<Set<Gender>, String> {
 }
 
 @Converter
-private class PlacesConverter : AttributeConverter<Set<String>, String> {
+private class ListConverter : AttributeConverter<Set<String>, String> {
     override fun convertToDatabaseColumn(attribute: Set<String>?): String {
         return attribute?.joinToString(",") ?: ""
     }

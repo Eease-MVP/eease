@@ -21,19 +21,20 @@ class SecurityConfig(
         http: HttpSecurity,
         jwtAuthenticationFilter: JwtAuthenticationFilter,
     ): SecurityFilterChain = with(http) {
+
         //  uncomment in order to be able to access H2 console through http://localhost:8080/h2-console/
         //  headers { headers -> headers.frameOptions(Customizer.withDefaults()).disable() }
 
         csrf { csrf -> csrf.disable() }
         authorizeHttpRequests { authorize ->
-            authorize.requestMatchers("api/auth/*", "/h2-console/**").permitAll()
-
-            authorize.anyRequest().fullyAuthenticated()
+            authorize
+                .requestMatchers("/api/auth/**", "/h2-console/**").permitAll()
+                .anyRequest().authenticated()
         }
         // or here?
         sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
         authenticationProvider(authenticationProvider)
         addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+        build()
     }
-        .build()
 }
