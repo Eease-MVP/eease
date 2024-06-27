@@ -5,7 +5,12 @@ export default function EditPreferences() {
 
     return (
         <View style={styles.container}>
-            <View style={styles.preferenceContainer}></View>
+            <Text style={styles.containerTitle}>My preferences</Text>
+            <View>
+                <Text style={styles.userPreferencesDisplay}>Chosen age gap: age - age</Text>
+                <Text style={styles.userPreferencesDisplay}>Avoid city: city, city, city</Text>
+                <Text style={styles.userPreferencesDisplay}>Chosen gender/s: gender</Text>
+            </View>
             <View>
                 <Text style={styles.editPreferenceText}>Edit my preferences</Text>
             </View>
@@ -25,5 +30,14 @@ const styles = StyleSheet.create({
         textAlign: "center",
         textDecorationLine: "underline",
         marginTop: 20
-    }
+    },
+    containerTitle: {
+        textAlign: "center",
+        fontSize: 25,
+        marginBottom: 20
+    },
+    userPreferencesDisplay: {
+        padding: 5,
+        fontSize: 16
+    },
 });
