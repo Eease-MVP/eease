@@ -1,34 +1,48 @@
-import React, { useState } from "react"
-import { View, Text, StyleSheet, Pressable, Alert, TextInput} from "react-native"
-import { Select } from "@mobile-reality/react-native-select-pro"
-import { useRouter } from "expo-router"
+import React, { useState } from "react";
+import { View, Text, StyleSheet, Pressable, Alert, TextInput } from "react-native";
+import { useRouter } from "expo-router";
+import RangeSlider from "react-native-range-slider-expo";
 
-import { Gender, genders, languages, Language } from "@/constants/ProfileInfo"
+// Define Gender type and genders array
+type Gender = {
+  value: string;
+  label: string;
+};
+
+const genders: Gender[] = [
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+  { value: "non-binary", label: "Non-binary" },
+  { value: "other", label: "Other" },
+];
 
 const ReceptorPreferences = () => {
-  const router = useRouter()
+  const router = useRouter();
 
-  const [preferredAgeGap, setPreferredAgeGap] = useState<string | undefined>()
-  const [preferredGender, setPreferredGender] = useState<Gender | undefined>()
-  const [cityToAvoid, setCityToAvoid] = useState<string>("")
-
-  const ages = Array.from({ length: 100 - 18 + 1 }, (v, i) => i + 18).map(
-    (age) => ({
-      value: age.toString(),
-      label: age.toString(),
-    })
-  )
+  const [preferredAgeGap, setPreferredAgeGap] = useState<{ min: number; max: number }>({ min: 18, max: 100 });
+  const [selectedGenders, setSelectedGenders] = useState<Gender[]>([]);
+  const [cityToAvoid, setCityToAvoid] = useState<string>("");
 
   const handleSavePreferences = () => {
-    if (!preferredAgeGap || !preferredGender || !cityToAvoid) {
-      Alert.alert("Error", "Please fill all the fields.")
-      return
+    if (selectedGenders.length === 0 || !cityToAvoid) {
+      Alert.alert("Error", "Please fill all the fields.");
+      return;
     }
 
     // Save preferences logic here
 
-    router.replace("(tabs)") // Navigate to the main tab screen after saving preferences
-  }
+    router.replace("(tabs)"); // Navigate to the main tab screen after saving preferences
+  };
+
+  const toggleGenderSelection = (gender: Gender) => {
+    setSelectedGenders((prevSelectedGenders) => {
+      if (prevSelectedGenders.some(g => g.value === gender.value)) {
+        return prevSelectedGenders.filter((g) => g.value !== gender.value);
+      } else {
+        return [...prevSelectedGenders, gender];
+      }
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -36,20 +50,30 @@ const ReceptorPreferences = () => {
 
       <View>
         <Text style={styles.label}>Preferred Age Gap:</Text>
-        <Select
-          options={ages}
-          placeholderText="Select preferred age gap"
-          onSelect={(value) => setPreferredAgeGap(value.value)}
+        <RangeSlider
+          min={18}
+          max={100}
+          fromValueOnChange={(value) => setPreferredAgeGap((prev) => ({ ...prev, min: value }))}
+          toValueOnChange={(value) => setPreferredAgeGap((prev) => ({ ...prev, max: value }))}
+          styleSize="small"
         />
+        <Text>Selected Age Range: {preferredAgeGap.min} - {preferredAgeGap.max}</Text>
       </View>
 
       <View>
-        <Text style={styles.label}>Preferred Gender:</Text>
-        <Select
-          options={genders}
-          placeholderText="Select preferred gender"
-          onSelect={(value) => setPreferredGender(Gender.parse(value.value))}
-        />
+        <Text style={styles.label}>Preferred Gender(s):</Text>
+        {genders.map((gender) => (
+          <Pressable
+            key={gender.value}
+            onPress={() => toggleGenderSelection(gender)}
+            style={[
+              styles.genderOption,
+              selectedGenders.some(g => g.value === gender.value) && styles.selectedGenderOption,
+            ]}
+          >
+            <Text style={styles.genderText}>{gender.label}</Text>
+          </Pressable>
+        ))}
       </View>
 
       <View>
@@ -66,8 +90,8 @@ const ReceptorPreferences = () => {
         <Text style={styles.buttonText}>Save Preferences</Text>
       </Pressable>
     </View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -101,6 +125,20 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
   },
-})
+  genderOption: {
+    padding: 10,
+    marginVertical: 5,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+  },
+  selectedGenderOption: {
+    backgroundColor: '#6f7dc7',
+    borderColor: '#6f7dc7',
+  },
+  genderText: {
+    color: '#000',
+  },
+});
 
-export default ReceptorPreferences
+export default ReceptorPreferences;
