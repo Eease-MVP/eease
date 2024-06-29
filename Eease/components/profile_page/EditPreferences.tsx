@@ -75,34 +75,36 @@ export default function EditPreferences() {
                 <View>
                     <Text style={styles.containerTitle}>My preferences</Text>
                     {isEditing ? (
-                        <View>
-                            <Text>Choose your preferred age gap</Text>
-                            <View style={styles.inline}>
-                                <Text style={styles.label}>From Age: *</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={preferences.fromAge.toString()}
-                                    onChangeText={text => handleInputChange('fromAge', Number(text))}
-                                    keyboardType="numeric"
-                                    returnKeyType="done"
-                                    blurOnSubmit={true}
-                                    onSubmitEditing={Keyboard.dismiss}
-                                />
-                            </View>
-                            <View style={styles.inline}>
-                                <Text style={styles.label}>To Age: *</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    value={preferences.toAge.toString()}
-                                    onChangeText={text => handleInputChange('toAge', Number(text))}
-                                    keyboardType="numeric"
-                                    returnKeyType="done"
-                                    blurOnSubmit={true}
-                                    onSubmitEditing={Keyboard.dismiss}
-                                />
+                        <View style={styles.editView}>
+                            <View>
+                                <Text style={styles.sectionTitle}>Choose your preferred age gap:</Text>
+                                <View style={styles.inline}>
+                                    <Text style={styles.label}>From Age: *</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={preferences.fromAge.toString()}
+                                        onChangeText={text => handleInputChange('fromAge', Number(text))}
+                                        keyboardType="numeric"
+                                        returnKeyType="done"
+                                        blurOnSubmit={true}
+                                        onSubmitEditing={Keyboard.dismiss}
+                                    />
+                                </View>
+                                <View style={styles.inline}>
+                                    <Text style={styles.label}>To Age: *</Text>
+                                    <TextInput
+                                        style={styles.input}
+                                        value={preferences.toAge.toString()}
+                                        onChangeText={text => handleInputChange('toAge', Number(text))}
+                                        keyboardType="numeric"
+                                        returnKeyType="done"
+                                        blurOnSubmit={true}
+                                        onSubmitEditing={Keyboard.dismiss}
+                                    />
+                                </View>
                             </View>
                             <View>
-                                <Text>Choose which cities you want to avoid</Text>
+                                <Text style={styles.sectionTitle}>Choose which cities you want to avoid:</Text>
                                 <FlatList
                                     data={preferences.cityToAvoid}
                                     renderItem={({ item, index }) => (
@@ -118,6 +120,7 @@ export default function EditPreferences() {
                                 <TextInput
                                     style={styles.input}
                                     placeholder="Add City to Avoid"
+                                    placeholderTextColor="#999999"
                                     value={newCity}
                                     onChangeText={text => setNewCity(text)}
                                 />
@@ -126,7 +129,7 @@ export default function EditPreferences() {
                                 </TouchableOpacity>
                             </View>
                             <View>
-                                <Text>Choose genders to interact with</Text>
+                                <Text style={styles.sectionTitle}>Choose genders to interact with:</Text>
                                 <FlatList
                                     data={preferences.genders}
                                     renderItem={({ item, index }) => (
@@ -142,6 +145,7 @@ export default function EditPreferences() {
                                 <TextInput
                                     style={styles.input}
                                     placeholder="Add Gender"
+                                    placeholderTextColor="#999999"
                                     value={newGender}
                                     onChangeText={text => setNewGender(text)}
                                 />
@@ -199,7 +203,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderColor: '#CCCCCC',
         borderWidth: 1,
-        flex: 1
+        flex: 1,
     },
     label: {
         fontSize: 16,
@@ -251,5 +255,16 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 5,
         marginTop: 10
+    },
+    editView: {
+        gap: 50
+    },
+    sectionTitle: {
+        fontSize: 16,
+        textAlign: "center",
+        fontWeight: "500",
+        justifyContent: "center",
+        marginLeft: "auto",
+        marginRight: "auto"
     }
 });
