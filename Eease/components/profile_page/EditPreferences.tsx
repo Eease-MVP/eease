@@ -3,13 +3,20 @@ import { StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, Touchabl
 
 export default function EditPreferences() {
 
+    let dummyData = {
+        fromAge: 18,
+        toAge: 22,
+        cityToAvoid: ["Stockholm, Malmö"],
+        genders: ["Male"]
+    }
+
     return (
         <View style={styles.container}>
             <Text style={styles.containerTitle}>My preferences</Text>
             <View>
-                <Text style={styles.userPreferencesDisplay}>Chosen age gap: age - age</Text>
-                <Text style={styles.userPreferencesDisplay}>Avoid city: city, city, city</Text>
-                <Text style={styles.userPreferencesDisplay}>Chosen gender/s: gender</Text>
+                <Text style={styles.userPreferencesDisplay}>Chosen age gap: {dummyData.fromAge} - {dummyData.toAge}</Text>
+                <Text style={styles.userPreferencesDisplay}>Avoid city: {dummyData.cityToAvoid}</Text>
+                <Text style={styles.userPreferencesDisplay}>Chosen gender/s: {dummyData.genders}</Text>
             </View>
             <View>
                 <Text style={styles.editPreferenceText}>Edit my preferences</Text>
