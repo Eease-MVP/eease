@@ -17,7 +17,6 @@ export default function UserInfoDisplay() {
 
     const handleEditToggle = () => {
         if (isEditing) {
-            // Validation checks
             if (!editedUser.username || !editedUser.age || !editedUser.gender || !editedUser.language) {
                 Alert.alert('Error', 'All fields are required.');
                 return;
@@ -56,6 +55,7 @@ export default function UserInfoDisplay() {
         <View style={styles.container}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                 <View>
+                    <Text style={styles.containerTitle}>User info</Text>
                     {isEditing ? (
                         <View>
                             <View style={styles.inline}>
@@ -178,5 +178,10 @@ const styles = StyleSheet.create({
     cancelButton: {
         color: 'red',
         textDecorationLine: 'underline'
+    },
+    containerTitle: {
+        textAlign: "center",
+        fontSize: 25,
+        marginBottom: 20
     }
 });

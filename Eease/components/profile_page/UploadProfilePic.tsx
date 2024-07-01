@@ -4,7 +4,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import * as ImagePicker from 'expo-image-picker';
 
 export default function UploadProfilePic() {
-    const [image, setImage] = useState<string | null>(null); // Update the state type
+    const [image, setImage] = useState<string | null>(null); 
 
     const checkForCameraRollPermission = async () => {
         const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
@@ -28,7 +28,7 @@ export default function UploadProfilePic() {
         });
 
         if (!result.canceled && result.assets.length > 0) {
-            const selectedAsset = result.assets[0]; // Get the first selected asset
+            const selectedAsset = result.assets[0];
             setImage(selectedAsset.uri);
         }
     };
