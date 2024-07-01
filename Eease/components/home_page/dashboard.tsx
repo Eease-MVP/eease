@@ -7,28 +7,23 @@ export default function Dashboard() {
     const user = useSelector((state: RootState) => state.user);
 
     return (
-        <SafeAreaView style={styles.safeArea}>
-            <View style={styles.container}>
-                <View style={styles.profileContainer}>
-                    <View style={styles.profilePic}></View>
-                    <View>
-                        <Text style={styles.welcomeText}>Welcome</Text>
-                        <Text>{user.username}!</Text>
-                    </View>
-                </View>
-                <View style={styles.statusContainer}>
-                    <Text style={styles.statusText}>Set status</Text>
-                    <View style={styles.status}></View>
+        <View style={styles.container}>
+            <View style={styles.profileContainer}>
+                <View style={styles.profilePic}></View>
+                <View>
+                    <Text style={styles.welcomeText}>Welcome</Text>
+                    <Text>{user.username}!</Text>
                 </View>
             </View>
-        </SafeAreaView>
+            <View style={styles.statusContainer}>
+                    <Text style={styles.statusText}>Set status</Text>
+                    <View style={styles.status}></View>
+            </View>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
-    safeArea: {
-        width: "100%"
-    },
     container: {
         backgroundColor: "#C7C7C7", 
         alignItems: 'center',
