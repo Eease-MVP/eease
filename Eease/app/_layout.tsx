@@ -12,6 +12,7 @@ import "react-native-reanimated"
 import { SelectProvider } from "@mobile-reality/react-native-select-pro"
 import SignInUpScreen from "@/app/sign"
 import PreferencesLayout from "./preferences/_layout"
+import PaymentScreen from "./payment_ui/PaymentScreen"
 import { useColorScheme } from "@/hooks/useColorScheme"
 import { useRouter } from "expo-router"
 
@@ -55,6 +56,7 @@ export default function RootLayout() {
             <Stack.Screen name="sign" options={{ headerShown: false }} />
             <Stack.Screen name="sign_up" options={{ title: "Sign Up" }} />
             <Stack.Screen name="sign_up/ReceptorPreferences"  options={{ title: "Receptor Preferences" }} />
+            <Stack.Screen name="payment_ui/PaymentScreen" options={{ title:"Payment" }}/>
           </Stack>
         </ThemeProvider>
       </SelectProvider>
