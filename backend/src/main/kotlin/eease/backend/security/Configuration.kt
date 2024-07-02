@@ -27,7 +27,8 @@ class Configuration {
 
     @Bean
     fun authenticationProvider(
-        userDetailsService: UserDetailsService): AuthenticationProvider =
+        userDetailsService: UserDetailsService,
+    ): AuthenticationProvider =
         DaoAuthenticationProvider()
             .apply {
                 setUserDetailsService(userDetailsService)

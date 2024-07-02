@@ -1,13 +1,13 @@
 package eease.backend.service
 
+import eease.backend.controller.EmailAlreadyExistsException
+import eease.backend.controller.SignResponse
 import eease.backend.model.UserCredentials
 import eease.backend.model.UserCredentialsRepository
 import eease.backend.security.jwt.JwtUtil
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.userdetails.UserDetailsService
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -19,58 +19,40 @@ class AuthenticationService(
     private val passwordEncoder: PasswordEncoder,
     private val userDetailsService: UserDetailsService,
 ) {
-    fun authenticate(
-        authenticationRequest: AuthenticationRequest,
-    ): AuthenticationResponse = with(userDetailsService) {
-        val userDetails: EeaseUserDetails
-        try {
-            userDetails = loadUserByUsername(authenticationRequest.email) as EeaseUserDetails
-        } catch (e: UsernameNotFoundException) {
-            throw BadCredentialsException("User with ${authenticationRequest.email} doesn't exist.")
-        }
-
+    fun signIn(
+        email: String,
+        password: String,
+    ): SignResponse = with(userDetailsService) {
         val auth = authManager.authenticate(
-            UsernamePasswordAuthenticationToken(
-                authenticationRequest.email,
-                authenticationRequest.password + userDetails.salt
+            UsernamePasswordAuthenticationToken.unauthenticated(
+                /* principal = */ email,
+                /* credentials = */ password
             )
         )
-        println("auth: $auth")
-
-        val accessToken = createAccessToken(authenticationRequest.email)
-        return AuthenticationResponse(accessToken = accessToken)
+        println("Authentication is $auth")
+        val userDetails = auth.principal as EeaseUserDetails
+        val id = userDetails.id
+        val accessToken = createAccessToken(id = id)
+        return SignResponse(accessToken = accessToken)
     }
 
 
-    fun register(
-        authenticationRequest: AuthenticationRequest,
-    ): AuthenticationResponse = with(userDetailsService) {
-        try {
-            loadUserByUsername(authenticationRequest.email)
-                ?.let { throw BadCredentialsException("User with ${authenticationRequest.email} already exists.") }
-        } catch (e: UsernameNotFoundException) {
-            println(e)
-        }
+    fun signUp(
+        email: String,
+        password: String,
+    ) = with(userDetailsService) {
 
-        val email = authenticationRequest.email
-        val salt = UserCredentials.generateSalt()
-        val hashedPassword = passwordEncoder.encode(authenticationRequest.password + salt)
+        userCredentialsRepository
+            .findUserCredentialsByEmailIgnoreCase(email = email)
+            ?.let { throw EmailAlreadyExistsException(email = email) }
 
-        val userCredentials = UserCredentials(email = email, hashedPassword = hashedPassword, salt = salt)
+        val hashedPassword = passwordEncoder.encode(password)
+        val userCredentials = UserCredentials(
+            email = email,
+            hashedPassword = hashedPassword,
+        )
         userCredentialsRepository.save(userCredentials)
-
-        val accessToken = createAccessToken(authenticationRequest.email)
-        return AuthenticationResponse(accessToken = accessToken)
     }
 
-    private fun createAccessToken(email: String) = jwt.generate(email = email)
+    private fun createAccessToken(id: Long) = jwt.generate(id = id)
 }
-
-data class AuthenticationRequest(
-    val email: String,
-    val password: String,
-)
-
-data class AuthenticationResponse(
-    val accessToken: String,
-)

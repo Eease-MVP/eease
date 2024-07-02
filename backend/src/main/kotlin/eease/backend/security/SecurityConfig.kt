@@ -10,7 +10,6 @@ import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
-
 @EnableWebSecurity
 @Configuration
 class SecurityConfig(
@@ -28,10 +27,9 @@ class SecurityConfig(
         csrf { csrf -> csrf.disable() }
         authorizeHttpRequests { authorize ->
             authorize
-                .requestMatchers("/api/auth/**", "/h2-console/**").permitAll()
+                .requestMatchers("/api/auth/**", "/h2-console/**", "api/user/all/**").permitAll()
                 .anyRequest().authenticated()
         }
-        // or here?
         sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
         authenticationProvider(authenticationProvider)
         addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
