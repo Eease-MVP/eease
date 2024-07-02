@@ -1,18 +1,31 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, Pressable, Alert, TextInput } from "react-native";
+import { View, Text, StyleSheet, Pressable, Alert, TextInput, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import RangeSlider from "react-native-range-slider-expo";
+import { CheckBox } from "react-native-elements";
+
+// Define Gender type and genders array
+type Gender = {
+  value: string;
+  label: string;
+};
+
+const genders: Gender[] = [
+  { value: "male", label: "Male" },
+  { value: "female", label: "Female" },
+  { value: "non-binary", label: "Non-binary" },
+  { value: "other", label: "Other" },
+];
 
 const ReceptorPreferences = () => {
   const router = useRouter();
 
   const [preferredAgeGap, setPreferredAgeGap] = useState<{ min: number; max: number }>({ min: 18, max: 100 });
-  const [selectedGenders, setSelectedGenders] = useState<string[]>([]);
+  const [selectedGenders, setSelectedGenders] = useState<Gender[]>([]);
   const [cityToAvoid, setCityToAvoid] = useState<string>("");
-  const [noCityPreference, setNoCityPreference] = useState(false);
 
   const handleSavePreferences = () => {
-    if (selectedGenders.length === 0 || (!cityToAvoid && !noCityPreference)) {
+    if (selectedGenders.length === 0 || !cityToAvoid) {
       Alert.alert("Error", "Please fill all the fields.");
       return;
     }
@@ -24,10 +37,10 @@ const ReceptorPreferences = () => {
     router.replace("(tabs)"); // Navigate to the main tab screen after saving preferences
   };
 
-  const toggleGenderSelection = (gender: string) => {
+  const toggleGenderSelection = (gender: Gender) => {
     setSelectedGenders((prevSelectedGenders) => {
-      if (prevSelectedGenders.includes(gender)) {
-        return prevSelectedGenders.filter((g) => g !== gender);
+      if (prevSelectedGenders.some(g => g.value === gender.value)) {
+        return prevSelectedGenders.filter((g) => g.value !== gender.value);
       } else {
         return [...prevSelectedGenders, gender];
       }
@@ -35,29 +48,26 @@ const ReceptorPreferences = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>Receptor Preferences</Text>
 
-      {/* Gender Selection */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Preferred Gender(s):</Text>
-        {["Male", "Female", "Non-binary"].map((gender) => (
-          <Pressable
-            key={gender}
-            onPress={() => toggleGenderSelection(gender)}
-            style={[
-              styles.option,
-              selectedGenders.includes(gender) && styles.selectedOption,
-            ]}
-          >
-            <Text style={styles.optionText}>{gender}</Text>
-          </Pressable>
+        <Text style={styles.sectionTitle}>Gender</Text>
+        {genders.map((gender) => (
+          <View key={gender.value} style={styles.checkboxContainer}>
+            <CheckBox
+              checked={selectedGenders.some(g => g.value === gender.value)}
+              onPress={() => toggleGenderSelection(gender)}
+              checkedColor="#6f7dc7"
+              containerStyle={styles.checkbox}
+            />
+            <Text style={styles.label}>{gender.label}</Text>
+          </View>
         ))}
       </View>
 
-      {/* Age Range Selection */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Preferred Age Gap:</Text>
+        <Text style={styles.sectionTitle}>Age</Text>
         <RangeSlider
           min={18}
           max={100}
@@ -65,92 +75,94 @@ const ReceptorPreferences = () => {
           toValueOnChange={(value) => setPreferredAgeGap((prev) => ({ ...prev, max: value }))}
           styleSize="small"
         />
-        <Text style={styles.selectedRangeText}>Selected Age Range: {preferredAgeGap.min} - {preferredAgeGap.max}</Text>
+        <Text style={styles.ageText}>Selected Age Range: {preferredAgeGap.min} - {preferredAgeGap.max}</Text>
       </View>
 
-      {/* City to Avoid */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>City to Avoid:</Text>
-        {noCityPreference ? (
-          <Text>None</Text>
-        ) : (
-          <TextInput
-            style={styles.input}
-            value={cityToAvoid}
-            onChangeText={setCityToAvoid}
-            placeholder="Type the city you want to avoid"
-          />
-        )}
-        <Pressable
-          onPress={() => setNoCityPreference(!noCityPreference)}
-          style={[
-            styles.option,
-            noCityPreference && styles.selectedOption,
-          ]}
-        >
-          <Text style={styles.optionText}>None</Text>
-        </Pressable>
+        <Text style={styles.sectionTitle}>Location I want to avoid:</Text>
+        <TextInput
+          style={styles.input}
+          value={cityToAvoid}
+          onChangeText={setCityToAvoid}
+          placeholder="Type the city you want to avoid"
+        />
       </View>
 
-      {/* Save Preferences Button */}
       <Pressable style={styles.button} onPress={handleSavePreferences}>
         <Text style={styles.buttonText}>Save Preferences</Text>
       </Pressable>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 20,
     backgroundColor: "#fff",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 16,
+    marginBottom: 20,
+    textAlign: "center",
+    color: "#6f7dc7",
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 30, // Increased margin to ensure no overlap
   },
   sectionTitle: {
     fontSize: 18,
-    marginBottom: 8,
+    fontWeight: "bold",
+    marginBottom: 10,
+    backgroundColor: "#D9D9D9",
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    color: "#000",
+    textAlign: "center",
+  },
+  label: {
+    fontSize: 16,
+    color: "#000",
   },
   input: {
     borderColor: "#ccc",
     borderWidth: 1,
-    padding: 8,
-    marginBottom: 16,
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: "#f9f9f9",
+    fontSize: 16,
+    marginTop: 10,
   },
   button: {
     backgroundColor: "#6f7dc7",
-    padding: 12,
+    padding: 14,
     borderRadius: 8,
     alignItems: "center",
-    marginTop: 16,
+    marginTop: 20,
   },
   buttonText: {
     color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  checkbox: {
+    padding: 0,
+    margin: 0,
+    marginRight: 10,
+    backgroundColor: "transparent",
+    borderWidth: 0,
+  },
+  ageText: {
+    marginTop: 10,
     fontSize: 16,
-  },
-  option: {
-    padding: 10,
-    marginVertical: 5,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-  },
-  selectedOption: {
-    backgroundColor: '#6f7dc7',
-    borderColor: '#6f7dc7',
-  },
-  optionText: {
-    color: '#000',
-  },
-  selectedRangeText: {
-    marginTop: 8,
+    color: "#555",
   },
 });
 
