@@ -1,26 +1,29 @@
-import { RootState } from '@/store/user-slice';
-import { View, Text, StyleSheet } from 'react-native';
-import { useSelector } from 'react-redux';
+import {StyleSheet, Text, View} from 'react-native';
+import {useFetchUserQuery} from "@/store/user-api";
+import {useEffect} from "react";
 
 export default function Home() {
-  const user = useSelector((state: RootState) => state.user)
+    const {data: user, error: fetchError, isLoading: isFetching} = useFetchUserQuery()
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Home</Text>
-      <Text>Hi, {user.username}!</Text>
-    </View>
-  )
+    useEffect(() => console.log("user is ", user, "error is ", fetchError), [])
+    return (
+        <View style={styles.container}>
+            <Text style={styles.title}>Home</Text>
+            <Text>Hi, {user?.name}!</Text>
+            <Text>Your birthday is {user?.birthDate}!</Text>
+            <Text>More info: {JSON.stringify(user)}!</Text>
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  }
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+    },
 })
