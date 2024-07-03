@@ -6,8 +6,9 @@ import {getErrorMessage, validateEmail} from "@/app/sign_up/signUtils";
 
 
 export default function SignInScreen() {
-    const [email, setEmail] = useState('john.doe@example.com')
-    const [password, setPassword] = useState('password123')
+    const testUser = {email: 'john.doe@example.com', password: 'password123'}
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
 
     //const [isLoading, setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
