@@ -1,16 +1,16 @@
 import { StyleSheet, Text, View } from "react-native";
 import { useSelector } from 'react-redux';
-import { RootState } from '@/store/user-slice';
 import UploadProfilePic from "./UploadProfilePic";
+import {useFetchUserQuery} from "@/store/user-api";
 
 export default function UserInfo() {
-    const user = useSelector((state: RootState) => state.user)
+    const {data: user} = useFetchUserQuery()
 
     return (
         <View style={styles.container}>
             <View style={styles.innerContainer}>
                 <View style={styles.nameContainer}>
-                    <Text style={styles.nameDisplay}>{user.username}</Text>
+                    <Text style={styles.nameDisplay}>{user?.name}</Text>
                 </View>
                 {/* <Text style={styles.editInfo}>Change my information</Text> */}
             </View>
