@@ -3,13 +3,15 @@ import * as SecureStore from 'expo-secure-store'
 import {Gender, Language} from "@/constants/ProfileInfo"
 
 const ACCESS_TOKEN_KEY = "access_token"
+// for testing purpose. Uncomment if you want to clear all the data
+// SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY)
 
 export interface User {
     name: string
     gender: Gender
     birthDate: string
     languages: Array<Language>
-    userPrefs?: {
+    prefs?: {
         ageFrom: number
         ageTo: number
         genders: Array<Gender>
@@ -30,7 +32,7 @@ interface UserJson {
     gender: keyof typeof Gender
     birthDate: string
     languages: Array<keyof typeof Language>
-    userPrefs?: {
+    prefs?: {
         ageFrom: number
         ageTo: number
         genders: Array<keyof typeof Gender>
@@ -103,26 +105,25 @@ export const userApi = createApi({
 const transformUserJsonToUser = (userJson: UserJson): User => {
     const gender = Gender[userJson.gender]
     const languages = userJson.languages.map(language => Language[language])
-    const userPrefs = userJson.userPrefs
+    const userPrefs = userJson.prefs
         ? {
-            ...userJson.userPrefs,
-            genders: userJson.userPrefs.genders.map(genderKey => Gender[genderKey]),
+            ...userJson.prefs,
+            genders: userJson.prefs.genders.map(genderKey => Gender[genderKey]),
         }
         : undefined
 
-    return {...userJson, gender, languages, userPrefs}
+    return {...userJson, gender, languages, prefs: userPrefs}
 }
 const transformUserToUserJson = (user: User): UserJson => {
     const gender = (Object.keys(Gender) as Array<keyof typeof Gender>).find(key => Gender[key] === user.gender) as keyof typeof Gender
     const languages = user.languages.map(language => (Object.keys(Language) as Array<keyof typeof Language>).find(key => Language[key] === language) as keyof typeof Language)
-    const userPrefs = user.userPrefs
+    const userPrefs = user.prefs
         ? {
-            ...user.userPrefs,
-            genders: user.userPrefs.genders.map(gender => (Object.keys(Gender) as Array<keyof typeof Gender>).find(key => Gender[key] === gender) as keyof typeof Gender),
+            ...user.prefs,
+            genders: user.prefs.genders.map(gender => (Object.keys(Gender) as Array<keyof typeof Gender>).find(key => Gender[key] === gender) as keyof typeof Gender),
         }
         : undefined
-
-    return {...user, gender, languages, userPrefs}
+    return {...user, gender, languages, prefs: userPrefs}
 }
 
 export const {
