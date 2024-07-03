@@ -5,7 +5,7 @@ import {Redirect} from "expo-router"
 
 
 export default function RedirectScreen() {
-    const {error, isLoading, isSuccess, isError} = useFetchUserQuery()
+    const {data: user, error, isLoading, isSuccess, isError} = useFetchUserQuery()
 
     console.log('error is', error)
     if (isError) {
@@ -26,5 +26,7 @@ export default function RedirectScreen() {
         </EeaseBackground>
     }
 
-    if (isSuccess) return <Redirect href="(tabs)"/>
+    if (isSuccess) {
+        return user.prefs ? <Redirect href="(tabs)"/> : <Redirect href="/sign_up/ReceptorPreferences/"/>
+    }
 }
