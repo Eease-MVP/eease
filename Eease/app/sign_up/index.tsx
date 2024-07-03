@@ -1,228 +1,128 @@
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native"
-import { useState } from "react"
-import TextInputWithTitle from "@/components/sign_up/TextInputWithTitle"
-import { Select } from "@mobile-reality/react-native-select-pro"
-import { useSelector, useDispatch } from "react-redux"
-import { useRouter } from "expo-router"
-import { setUser, RootState, isFilled, User } from "@/store/user-slice"
-import { TouchableOpacity } from "react-native"
-import { Link } from "expo-router"
-import { Gender, genders, Language, languages } from "@/constants/ProfileInfo"
+import {ActivityIndicator, Animated, Button, StyleSheet, Text, TextInput, View} from "react-native"
+import {useEffect, useRef, useState} from "react"
+import {useRouter} from "expo-router"
+import {useSignInMutation, useSignUpMutation} from "@/store/user-api"
+import {getErrorMessage, validateEmail} from "@/app/sign_up/signUtils";
 
-type userType = {
-  username?: string
-  gender?: Gender
-  age?: number
-  language?: Language
-  //location: Location?| undefined,
-  isFilled: () => boolean
-}
 
-const emptyUser: userType = {
-  isFilled(): boolean {
-    return (
-      this.username !== undefined &&
-      this.age !== undefined &&
-      this.gender !== undefined &&
-      this.language !== undefined
-    )
-  },
-  username: "",
-  age: undefined,
-  gender: undefined,
-  language: undefined,
-}
+export default function SignInScreen() {
+    const [email, setEmail] = useState('john.doe@example.com')
+    const [password, setPassword] = useState('password123')
 
-const ages = Array.from({ length: 100 - 18 + 1 }, (v, i) => i + 18).map(
-  (age) => ({
-    value: age.toString(),
-    label: age.toString(),
-  })
-)
+    //const [isLoading, setLoading] = useState(false)
+    const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const fadeAnim = useRef(new Animated.Value(0)).current
 
-export default function SignUpScreen() {
-  const user = useSelector((state: RootState) => state.user)
-  const dispatch = useDispatch()
-  const router = useRouter()
-  const [newUser, setNewUser] = useState({ ...user })
-  const [toggleCheckBoxTerms, setToggleCheckBoxTerms] = useState(false)
-  const [toggleCheckBoxNewsletter, setToggleCheckBoxNewsletter] =
-    useState(false)
-
-  const next = () => {
-    if (isFilled(newUser) && toggleCheckBoxTerms) {
-      dispatch(setUser(newUser))
-      router.push("sign_up/ReceptorPreferences");
-    } else {
-      showAlert()
-    }
-  }
-
-  const showAlert = () => {
-    Alert.alert(
-      "Error",
-      "You have to fill all the fields and agree to the terms and conditions.",
-      [{ text: "OK" }],
-      { cancelable: true }
-    )
-  }
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
-
-      <TextInputWithTitle
-        title={"Username"}
-        value={newUser.username ?? ""}
-        onChangeValue={(username) =>
-          setNewUser({ ...newUser, username: username })
+    const [signUp, {isLoading: isSigningUp}] = useSignUpMutation()
+    const [signIn, {isLoading: isSigningIn}] = useSignInMutation()
+    useEffect(() => {
+        if (errorMessage) {
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 500,
+                useNativeDriver: true,
+            }).start()
+        } else {
+            fadeAnim.setValue(0)
         }
-        placeholder={"Type your username here..."}
-      />
-      <View>
-        <Text style={styles.label}>Gender:</Text>
-        <Select
-          defaultOption={Gender.getValueLabel(newUser.gender)}
-          options={genders}
-          onSelect={(value) => {
-            const gender = Gender.parse(value.value)
-            setNewUser({ ...newUser, gender: gender })
-          }}
-          placeholderText="Select your gender"
-          clearable={false}
-        />
-      </View>
-      <View>
-        <Text style={styles.label}> Age:</Text>
-        <Select
-          defaultOption={
-            newUser.age
-              ? { value: newUser.age.toString(), label: newUser.age.toString() }
-              : undefined
-          }
-          options={ages}
-          onSelect={(value) => {
-            const age = Number(value.value)
-            setNewUser({ ...newUser, age: age })
-          }}
-          placeholderText="Select your age"
-          clearable={false}
-        />
-      </View>
-      <View>
-        <Text style={styles.label}> Location:</Text>
-        <Text> Location chooser?</Text>
-      </View>
+    }, [errorMessage])
 
-      <View>
-        <Text style={styles.label}> Language:</Text>
-        <Select
-          defaultOption={Language.getValueLabel(newUser.language)}
-          options={languages}
-          placeholderText="Select your language"
-          searchable={true}
-          onSelect={(value) => {
-            const language = Language.parse(value.value)
-            setNewUser({ ...newUser, language: language })
-          }}
-        />
-      </View>
+    const router = useRouter()
 
-      <View style={styles.checkboxContainer}>
-        <TouchableOpacity
-          style={styles.checkBox}
-          onPress={() => setToggleCheckBoxNewsletter(!toggleCheckBoxNewsletter)}
-        >
-          {toggleCheckBoxNewsletter && <Text>✓</Text>}
-        </TouchableOpacity>
-        <Text style={styles.checkboxText}>
-          I want to receive the newsletter
-        </Text>
-      </View>
 
-      <View style={styles.checkboxContainer}>
-        <TouchableOpacity
-          style={styles.checkBox}
-          onPress={() => setToggleCheckBoxTerms(!toggleCheckBoxTerms)}
-        >
-          {toggleCheckBoxTerms && <Text>✓</Text>}
-        </TouchableOpacity>
-        <Text style={styles.checkboxText}>
-          I agree to the{" "}
-          <Link href="/sign_up/termsPage" asChild={true}>
-            <Pressable>
-              <Text style={styles.underlineText}>terms and conditions</Text>
-            </Pressable>
-          </Link>
-          {/* <Link href="/termsPage" style={styles.underlineText}>
-            terms and conditions
-          </Link> */}
-        </Text>
-      </View>
+    const handleSignUp = async () => {
+        setErrorMessage(null)
 
-      <View style={{ flex: 1 }}></View>
-      <Pressable
-        style={({ pressed }) => [
-          {
-            backgroundColor: pressed ? "rgba(111,125,199,0.55)" : "#6f7dc7",
-          },
-          styles.button,
-        ]}
-        onPress={next}
-      >
-        <Text style={styles.buttonText}>Next</Text>
-      </Pressable>
-    </View>
-  )
+        if (!validateEmail(email)) {
+            setErrorMessage('Please enter a valid email address.')
+            return
+        }
+        if (password.length < 8) {
+            setErrorMessage('Password must be at least 8 characters long.')
+            return
+        }
+        const {error} = await signUp({email, password})
+        if (error) {
+            setErrorMessage(getErrorMessage(error))
+        } else {
+            const {error} = await signIn({email, password})
+            if (error) {
+                setErrorMessage(getErrorMessage(error))
+            } else {
+                setErrorMessage(null)
+                router.dismissAll()
+                router.replace("/sign_up/createUser")
+            }
+        }
+    }
+
+    return (
+        <View style={styles.background}>
+            {errorMessage && (
+                <Animated.View style={{...styles.errorContainer, opacity: fadeAnim}}>
+                    <Text style={styles.errorText}>{errorMessage}</Text>
+                </Animated.View>
+            )}
+            <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={email}
+                onChangeText={email => {
+                    setErrorMessage(null)
+                    setEmail(email)
+                }}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                placeholderTextColor="#aaa"
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Password"
+                value={password}
+                onChangeText={password => {
+                    setErrorMessage(null)
+                    setPassword(password)
+                }}
+                secureTextEntry
+                autoCapitalize="none"
+                placeholderTextColor="#aaa"
+            />
+            <Button title="Sign up" onPress={handleSignUp}/>
+            {isSigningIn && <Text>Creating user..</Text>}
+            {isSigningUp && <Text>Signing in...</Text>}
+            {isSigningIn || isSigningUp && <ActivityIndicator color={"blue"}/>}
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-  },
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#fff",
-    gap: 16,
-  },
-  label: {
-    fontSize: 14,
-  },
-  input: {
-    borderColor: "#ccc",
-    borderWidth: 1,
-    padding: 8,
-  },
-  button: {
-    alignSelf: "center",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-  },
-  buttonText: {
-    color: "#fff", // Set the text color for better contrast
-    fontSize: 16,
-  },
-  checkBox: {
-    width: 20,
-    height: 20,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "#000",
-  },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 20,
-  },
-  checkboxText: {
-    marginLeft: 10,
-  },
-  underlineText: {
-    textDecorationLine: "underline",
-  },
+    background: {
+        flex: 1,
+        width: "100%",
+        height: "100%",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 10,
+    },
+    input: {
+        width: 256,
+        height: 40,
+        borderColor: 'gray',
+        borderWidth: 1,
+        marginBottom: 12,
+        paddingHorizontal: 8,
+        backgroundColor: '#fff',
+        borderRadius: 4,
+    },
+    errorContainer: {
+        padding: 10,
+        marginBottom: 20,
+        backgroundColor: 'red',
+        borderRadius: 4,
+    },
+    errorText: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    },
 })
