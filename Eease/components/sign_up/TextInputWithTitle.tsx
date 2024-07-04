@@ -18,7 +18,8 @@ export default function TextInputWithTitle({title, value, onChangeValue, placeho
                 value={value}
                 onChangeText={onChangeValue}
                 multiline={false}
-                placeholder={placeholder}/>
+                placeholder={placeholder}
+                />
         </View>
     )
 }

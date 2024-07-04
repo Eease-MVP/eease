@@ -1,10 +1,10 @@
 package eease.backend.controller
 
-import eease.backend.model.Gender
+import eease.backend.service.UserReq
 import eease.backend.service.UserService
 import jakarta.persistence.*
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDate
 import java.util.*
 
 @RestController
@@ -12,26 +12,14 @@ import java.util.*
 class UserController(
     private val userService: UserService,
 ) {
-
     @GetMapping
-    fun getCurrentUser() = userService.getCurrentUser()
+    fun getCurrentUser(): ResponseEntity<UserReq> = userService.getCurrentUser()
+        ?.let { ResponseEntity.ok(it) } ?: ResponseEntity.notFound().build()
 
     @PostMapping
-    fun saveUser(@RequestBody user: UserReq) = userService.saveUser(user)
+    fun saveUser(@RequestBody user: UserReq): ResponseEntity<UserReq> = userService.saveUser(user)
+        ?.let { ResponseEntity.ok(it) } ?: ResponseEntity.notFound().build()
 
+    @GetMapping("/all")
+    fun getAllUsers() = userService.getAll()
 }
-
-data class UserReq(
-    val name: String,
-    val gender: Gender,
-    val birthDate: LocalDate,
-    val languages: Set<String>,
-    val userPrefs: UserPrefsReq,
-)
-
-data class UserPrefsReq(
-    val ageFrom: Int = 18,
-    val ageTo: Int = Int.MAX_VALUE,
-    val genders: Set<Gender> = Gender.entries.toSet(),
-    val placesToAvoid: Set<String>,
-)

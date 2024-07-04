@@ -1,37 +1,39 @@
-import {ActivityIndicator, Animated, Button, StyleSheet, Text, TextInput, View} from "react-native"
-import {useEffect, useRef, useState} from "react"
-import {useRouter} from "expo-router"
-import {useSignInMutation, useSignUpMutation} from "@/store/user-api"
+import {ActivityIndicator, Animated, Button, ImageBackground, StyleSheet, Text, TextInput} from "react-native"
+import {useEffect, useRef, useState} from "react";
+import {useRouter} from "expo-router";
+import {useSignInMutation} from "@/store/user-api";
 import {getErrorMessage, validateEmail} from "@/app/sign_up/signUtils";
 
+const background = require("../../assets/images/background.jpg")
+
+// naive email validator
 
 export default function SignInScreen() {
     const testUser = {email: 'john.doe@example.com', password: 'password123'}
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     //const [isLoading, setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
-    const fadeAnim = useRef(new Animated.Value(0)).current
+    const fadeAnim = useRef(new Animated.Value(0)).current;
 
-    const [signUp, {isLoading: isSigningUp}] = useSignUpMutation()
-    const [signIn, {isLoading: isSigningIn}] = useSignInMutation()
+    const [signIn, {isLoading}] = useSignInMutation();
+
     useEffect(() => {
         if (errorMessage) {
             Animated.timing(fadeAnim, {
                 toValue: 1,
                 duration: 500,
                 useNativeDriver: true,
-            }).start()
+            }).start();
         } else {
-            fadeAnim.setValue(0)
+            fadeAnim.setValue(0);
         }
-    }, [errorMessage])
+    }, [errorMessage]);
 
     const router = useRouter()
 
-
-    const handleSignUp = async () => {
+    const handleSignIn = async () => {
         setErrorMessage(null)
 
         if (!validateEmail(email)) {
@@ -42,23 +44,19 @@ export default function SignInScreen() {
             setErrorMessage('Password must be at least 8 characters long.')
             return
         }
-        const {error} = await signUp({email, password})
+        const {error} = await signIn({email, password})
         if (error) {
             setErrorMessage(getErrorMessage(error))
         } else {
-            const {error} = await signIn({email, password})
-            if (error) {
-                setErrorMessage(getErrorMessage(error))
-            } else {
-                setErrorMessage(null)
-                router.dismissAll()
-                router.replace("/sign_up/createUser")
-            }
+            setErrorMessage(null)
+            router.dismissAll()
+            router.replace("(tabs)")
         }
-    }
+
+    };
 
     return (
-        <View style={styles.background}>
+        <ImageBackground source={background} style={styles.background}>
             {errorMessage && (
                 <Animated.View style={{...styles.errorContainer, opacity: fadeAnim}}>
                     <Text style={styles.errorText}>{errorMessage}</Text>
@@ -88,11 +86,9 @@ export default function SignInScreen() {
                 autoCapitalize="none"
                 placeholderTextColor="#aaa"
             />
-            <Button title="Sign up" onPress={handleSignUp}/>
-            {isSigningIn && <Text>Creating user..</Text>}
-            {isSigningUp && <Text>Signing in...</Text>}
-            {isSigningIn || isSigningUp && <ActivityIndicator color={"blue"}/>}
-        </View>
+            <Button title="Sign In" onPress={handleSignIn}/>
+            {isLoading && <ActivityIndicator color={"blue"}/>}
+        </ImageBackground>
     )
 }
 

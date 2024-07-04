@@ -1,10 +1,10 @@
 package eease.backend.security.jwt
 
+import eease.backend.service.EeaseUserDetails
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.util.*
 
@@ -15,12 +15,12 @@ class JwtUtil(
     private val secretKey = Keys.hmacShaKeyFor(jwtProperties.key.toByteArray())
 
     fun generate(
-        email: String,
+        id: Long,
         expirationDate: Date = Date(System.currentTimeMillis() + jwtProperties.accessTokenExpiration),
         additionalClaims: Map<String, Any> = emptyMap(),
     ): String = Jwts.builder()
         .claims()
-        .subject(email)
+        .subject(id.toString())
         .issuedAt(Date(System.currentTimeMillis()))
         .expiration(expirationDate)
         .add(additionalClaims)
@@ -28,12 +28,12 @@ class JwtUtil(
         .signWith(secretKey)
         .compact()
 
-    fun isValid(token: String, userDetails: UserDetails): Boolean {
-        val email = extractEmail(token)
-        return userDetails.username == email && !isExpired(token)
+    fun isValid(token: String, userDetails: EeaseUserDetails): Boolean {
+        val id = extractId(token)
+        return userDetails.id == id && !isExpired(token)
     }
 
-    fun extractEmail(token: String): String? = getAllClaims(token).subject
+    fun extractId(token: String): Long? = getAllClaims(token).subject?.toLong()
 
     fun isExpired(token: String): Boolean =
         getAllClaims(token)
