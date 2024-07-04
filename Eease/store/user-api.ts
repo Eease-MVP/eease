@@ -2,7 +2,8 @@ import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'
 import * as SecureStore from 'expo-secure-store'
 import {Gender, Language} from "@/constants/ProfileInfo"
 
-const ACCESS_TOKEN_KEY = "access_token"
+const ACCESS_TOKEN_KEY = 'access_token'
+const BASE_URL = 'http://192.168.1.122:8080/api'
 // for testing purpose. Uncomment if you want to clear all the data
 // SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY)
 
@@ -41,7 +42,7 @@ interface UserJson {
 }
 
 const baseQuery = fetchBaseQuery({
-    baseUrl: 'http://192.168.1.122:8080/api',
+    baseUrl: BASE_URL,
     prepareHeaders: async (headers, {endpoint}) => {
         // add token, only for those methods that require authentication
         if (!['signUp', 'signIn'].includes(endpoint)) {
