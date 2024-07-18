@@ -1,11 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store/user-slice';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 export default function HomePageNav() {
-    const user = useSelector((state: RootState) => state.user);
 
     return (
         <SafeAreaView style={styles.safeArea}>
