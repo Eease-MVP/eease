@@ -1,4 +1,5 @@
 // helper functions
+
 function getValueLabelFromEnum(enumObj: any, value: any) {
     return value ? {value: getEnumKeyByValue(enumObj, value), label: value.toString()} : undefined;
 }
@@ -20,7 +21,7 @@ export enum Gender {
     TRANSGENDER = 'Transgender',
 }
 
-export namespace Gender {
+export namespace GenderUtils {
     export function getKey(gender: Gender): string {
         return getEnumKeyByValue(Gender, gender);
     }
@@ -36,7 +37,6 @@ export namespace Gender {
 
 export const genders = Object.entries(Gender)
     .map(([key, gender]) => ({value: key, label: gender.toString()}))
-
 
 // Language enum
 
@@ -227,7 +227,7 @@ export enum Language {
     zu = 'Zulu',
 }
 
-export namespace Language {
+export namespace LanguageUtils {
     export function getKey(language: Language): string {
         return getEnumKeyByValue(Language, language);
     }

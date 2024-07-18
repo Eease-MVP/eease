@@ -8,8 +8,8 @@ import java.time.LocalDate
 @Entity
 @Table(name = "users")
 class User(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+    @Id
+    var id: Long,
     var name: String,
     @Enumerated(EnumType.STRING)
     var gender: Gender,
@@ -17,15 +17,14 @@ class User(
     @Convert(converter = ListConverter::class)
     var languages: Set<String>,
     @OneToOne(cascade = [CascadeType.ALL], orphanRemoval = true)
-    @JoinColumn(name = "user_prefs_id", referencedColumnName = "id")
-    var userPrefs: UserPrefs,
+    var prefs: Prefs?,
 )
 
 
 @Entity
-class UserPrefs(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+class Prefs(
+    @Id
+    var id: Long,
     var ageFrom: Int,
     var ageTo: Int,
     @Convert(converter = GenderConverter::class)
@@ -36,12 +35,7 @@ class UserPrefs(
 )
 
 
-enum class Gender(val value: String) {
-    FEMALE("Female"),
-    MALE("Male"),
-    NON_BINARY("Non-binary"),
-    TRANSGENDER("Transgender");
-}
+enum class Gender { FEMALE, MALE, NON_BINARY, TRANSGENDER; }
 
 @Converter
 private class GenderConverter : AttributeConverter<Set<Gender>, String> {

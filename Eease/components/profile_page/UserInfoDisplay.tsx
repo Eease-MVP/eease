@@ -1,36 +1,24 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, Keyboard, TouchableWithoutFeedback, Alert } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '@/store/user-slice';
-import { setUser } from '@/store/user-slice';
+import {useFetchUserQuery} from "@/store/user-api";
 
 export default function UserInfoDisplay() {
-    const user = useSelector((state: RootState) => state.user);
-    const dispatch = useDispatch();
+    const {data: user} = useFetchUserQuery()
+
     const [isEditing, setIsEditing] = useState(false);
     const [editedUser, setEditedUser] = useState({
-        username: user.username || '',
-        age: user.age?.toString() || '',
-        gender: user.gender || '',
-        language: user.language || ''
+        username: user?.name,
+        birthday: user?.birthDate,
+        gender: user?.gender,
+        languages: user?.languages
     });
 
     const handleEditToggle = () => {
         if (isEditing) {
-            if (!editedUser.username || !editedUser.age || !editedUser.gender || !editedUser.language) {
+            if (!editedUser.username || !editedUser.birthday || !editedUser.gender || !editedUser.languages) {
                 Alert.alert('Error', 'All fields are required.');
                 return;
             }
-            const age = parseInt(editedUser.age);
-            if (isNaN(age) || age < 18) {
-                Alert.alert('Error', 'You must be over the ag of 18');
-                return;
-            }
-
-            dispatch(setUser({
-                ...editedUser,
-                age: age 
-            }));
         }
         setIsEditing(!isEditing);
         Keyboard.dismiss(); 
@@ -42,10 +30,10 @@ export default function UserInfoDisplay() {
 
     const handleCancel = () => {
         setEditedUser({
-            username: user.username || '',
-            age: user.age?.toString() || '',
-            gender: user.gender || '',
-            language: user.language || ''
+            username: user?.name,
+            birthday: user?.birthDate ,
+            gender: user?.gender ,
+            languages: user?.languages
         });
         setIsEditing(false);
         Keyboard.dismiss(); 
@@ -63,18 +51,18 @@ export default function UserInfoDisplay() {
                                 <TextInput
                                     style={styles.input}
                                     value={editedUser.username}
-                                    onChangeText={(text) => handleInputChange('username', text)}
+                                    onChangeText={(text) => handleInputChange('name', text)}
                                     returnKeyType="done"
                                     blurOnSubmit={true}
                                     onSubmitEditing={Keyboard.dismiss} 
                                 />
                             </View>
                             <View style={styles.inline}>
-                                <Text style={styles.label}>Age: *</Text>
+                                <Text style={styles.label}>Birthday: *</Text>
                                 <TextInput
                                     style={styles.input}
-                                    value={editedUser.age}
-                                    onChangeText={(text) => handleInputChange('age', text)}
+                                    value={editedUser.birthday}
+                                    onChangeText={(text) => handleInputChange('birthday', text)}
                                     keyboardType="numeric"
                                     returnKeyType="done"
                                     blurOnSubmit={true}
@@ -96,7 +84,7 @@ export default function UserInfoDisplay() {
                                 <Text style={styles.label}>Language: *</Text>
                                 <TextInput
                                     style={styles.input}
-                                    value={editedUser.language}
+                                    value={editedUser.languages?.join()}
                                     onChangeText={(text) => handleInputChange('language', text)}
                                     returnKeyType="done"
                                     blurOnSubmit={true}
@@ -114,10 +102,10 @@ export default function UserInfoDisplay() {
                         </View>
                     ) : (
                         <View>
-                            <Text style={styles.userInfoDisplay}>Username: {user.username}</Text>
-                            <Text style={styles.userInfoDisplay}>Age: {user.age}</Text>
-                            <Text style={styles.userInfoDisplay}>Gender: {user.gender}</Text>
-                            <Text style={styles.userInfoDisplay}>Language: {user.language}</Text>
+                            <Text style={styles.userInfoDisplay}>Username: {user?.name}</Text>
+                            <Text style={styles.userInfoDisplay}>Birthday: {user?.birthDate}</Text>
+                            <Text style={styles.userInfoDisplay}>Gender: {user?.gender}</Text>
+                            <Text style={styles.userInfoDisplay}>Languages: {user?.languages}</Text>
                             <TouchableOpacity onPress={handleEditToggle}>
                                 <Text style={styles.editInfoText}>Edit my info</Text>
                             </TouchableOpacity>

@@ -6,9 +6,10 @@ import Dashboard from '@/components/home_page/Dashboard';
 import HomePageNav from '@/components/home_page/HomePageNav';
 import ReceptorPreferencesDisplay from '@/components/home_page/ReceptorPreferencesDisplay';
 import ExploreReceptors from '@/components/home_page/ExploreReceptors';
+import {useFetchUserQuery} from "@/store/user-api";
 
 export default function Home() {
-  const user = useSelector((state: RootState) => state.user)
+    const {data: user, error: fetchError, isLoading: isFetching, refetch} = useFetchUserQuery()
 
   return (
     <SafeAreaView style={styles.safeArea}>

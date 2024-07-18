@@ -1,7 +1,5 @@
 package eease.backend.controller
 
-import eease.backend.service.AuthenticationRequest
-import eease.backend.service.AuthenticationResponse
 import eease.backend.service.AuthenticationService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -13,14 +11,28 @@ import org.springframework.web.bind.annotation.RestController
 class AuthorizeController(
     private val authenticationService: AuthenticationService,
 ) {
+    @PostMapping("/sign_up")
+    fun signUp(
+        @RequestBody signUpRequest: SignRequest,
+    ) = authenticationService.signUp(
+        email = signUpRequest.email,
+        password = signUpRequest.password,
+    )
 
-    @PostMapping("/authenticate")
-    fun authenticate(
-        @RequestBody authenticationRequest: AuthenticationRequest,
-    ): AuthenticationResponse = authenticationService.authenticate(authenticationRequest)
-
-    @PostMapping("/register")
-    fun registerUser(
-        @RequestBody authenticationRequest: AuthenticationRequest,
-    ): AuthenticationResponse = authenticationService.register(authenticationRequest)
+    @PostMapping("/sign_in")
+    fun signIn(
+        @RequestBody signInRequest: SignRequest,
+    ): SignResponse = authenticationService.signIn(
+        email = signInRequest.email,
+        password = signInRequest.password,
+    )
 }
+
+data class SignRequest(
+    val email: String,
+    val password: String,
+)
+
+data class SignResponse(
+    val accessToken: String,
+)

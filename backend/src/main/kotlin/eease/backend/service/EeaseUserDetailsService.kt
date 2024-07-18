@@ -2,6 +2,7 @@ package eease.backend.service
 
 import eease.backend.model.UserCredentialsRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
@@ -18,19 +19,26 @@ class EeaseUserDetailsService(
         ?.let {
             EeaseUserDetails(
                 id = it.id!!,
-                salt = it.salt,
                 username = it.email,
                 password = it.hashedPassword,
                 authorities = emptyList()
             )
         } ?: throw UsernameNotFoundException("The user with email: $email doesn't exist")
 
+    fun loadUserById(id: Long) : UserDetails = userCredentialsRepository.findByIdOrNull(id)
+        ?.let {
+            EeaseUserDetails(
+                id = it.id!!,
+                username = it.email,
+                password = it.hashedPassword,
+                authorities = emptyList()
+            )
+        } ?: throw UsernameNotFoundException("The user with email: $id doesn't exist")
 }
 
 
 data class EeaseUserDetails(
     val id: Long,
-    val salt: String,
     private val username: String,
     private val password: String,
     private val authorities: Collection<GrantedAuthority>,
