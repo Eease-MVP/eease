@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     },
     logoContainer: {
         alignItems: 'center',
-        backgroundColor: "#C7C7C7", 
+        backgroundColor: "#ECECEC", 
         borderRadius: 15,
         marginLeft: "auto",
         padding: 10,
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     },
 
     iconContainer: {
-        backgroundColor: "#C7C7C7",
+        backgroundColor: "#ECECEC",
         borderRadius: 100,
         padding: 10,
         marginLeft: "10%"

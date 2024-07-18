@@ -65,9 +65,10 @@ const styles = StyleSheet.create({
     receptor: {
         margin: 10,
         padding: 15,
-        borderRadius: 5,
+        borderRadius: 25,
         backgroundColor: "#ECECEC",
         width: 200,
+        height: 170,
         justifyContent: 'space-between',
     },
     innerReceptorContainer: {
