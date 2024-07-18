@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import Dashboard from '@/components/home_page/Dashboard';
 import HomePageNav from '@/components/home_page/HomePageNav';
 import ReceptorPreferencesDisplay from '@/components/home_page/ReceptorPreferencesDisplay';
+import ExploreReceptors from '@/components/home_page/ExploreReceptors';
 
 export default function Home() {
   const user = useSelector((state: RootState) => state.user)
@@ -13,6 +14,7 @@ export default function Home() {
         <HomePageNav />
         <Dashboard />
         <ReceptorPreferencesDisplay />
+        <ExploreReceptors />
     </View>
   )
 }
