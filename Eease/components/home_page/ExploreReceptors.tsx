@@ -64,9 +64,7 @@ const styles = StyleSheet.create({
     },
     receptor: {
         margin: 10,
-        padding: 10,
-        borderWidth: 1,
-        borderColor: "#ccc",
+        padding: 15,
         borderRadius: 5,
         backgroundColor: "#ECECEC",
         width: 200,

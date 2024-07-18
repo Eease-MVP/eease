@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store/user-slice';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 export default function Dashboard() {
     const user = useSelector((state: RootState) => state.user);
@@ -9,15 +10,17 @@ export default function Dashboard() {
     return (
         <View style={styles.container}>
             <View style={styles.profileContainer}>
-                <View style={styles.profilePic}></View>
+                <View style={styles.profilePic}>
+                    <AntDesign name="user" size={24} color="black" />                            
+                </View>
                 <View>
                     <Text style={styles.welcomeText}>Welcome</Text>
                     <Text>{user.username}!</Text>
                 </View>
             </View>
             <View style={styles.statusContainer}>
-                    <Text style={styles.statusText}>Set status</Text>
-                    <View style={styles.status}></View>
+                <Text style={styles.statusText}>Set status</Text>
+                <View style={styles.status}></View>
             </View>
         </View>
     );
@@ -25,12 +28,10 @@ export default function Dashboard() {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: "#C7C7C7", 
+        backgroundColor: "#ECECEC", 
         alignItems: 'center',
         padding: 20,
         width: "70%",
-        marginLeft: "auto",
-        marginRight: "auto",
         borderRadius: 25
     },
     profileContainer: {
@@ -41,8 +42,10 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         borderRadius: 25, 
-        backgroundColor: "#A4A4A4",
+        backgroundColor: "#C7C7C7",
         marginRight: 10, 
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     welcomeText: {
         fontSize: 20,
@@ -52,7 +55,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginTop: 20,
-        backgroundColor: "#A4A4A4",
+        backgroundColor: "#C7C7C7",
         borderRadius: 50,
         padding: 15
     },
