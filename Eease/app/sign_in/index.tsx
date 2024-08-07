@@ -1,15 +1,15 @@
-import {ActivityIndicator, Animated, Button, ImageBackground, StyleSheet, Text, TextInput} from "react-native"
-import {useEffect, useRef, useState} from "react";
-import {useRouter} from "expo-router";
-import {useSignInMutation} from "@/store/user-api";
-import {getErrorMessage, validateEmail} from "@/app/sign_up/signUtils";
+import { ActivityIndicator, Animated, Button, ImageBackground, StyleSheet, Text, TextInput } from "react-native"
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "expo-router";
+import { useSignInMutation } from "@/store/user-api";
+import { getErrorMessage, validateEmail } from "@/app/sign_up/signUtils";
 
 const background = require("../../assets/images/background.jpg")
 
 // naive email validator
 
 export default function SignInScreen() {
-    const testUser = {email: 'john.doe@example.com', password: 'password123'}
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -17,7 +17,7 @@ export default function SignInScreen() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const fadeAnim = useRef(new Animated.Value(0)).current;
 
-    const [signIn, {isLoading}] = useSignInMutation();
+    const [signIn, { isLoading }] = useSignInMutation();
 
     useEffect(() => {
         if (errorMessage) {
@@ -44,7 +44,7 @@ export default function SignInScreen() {
             setErrorMessage('Password must be at least 8 characters long.')
             return
         }
-        const {error} = await signIn({email, password})
+        const { error } = await signIn({ email, password })
         if (error) {
             setErrorMessage(getErrorMessage(error))
         } else {
@@ -58,7 +58,7 @@ export default function SignInScreen() {
     return (
         <ImageBackground source={background} style={styles.background}>
             {errorMessage && (
-                <Animated.View style={{...styles.errorContainer, opacity: fadeAnim}}>
+                <Animated.View style={{ ...styles.errorContainer, opacity: fadeAnim }}>
                     <Text style={styles.errorText}>{errorMessage}</Text>
                 </Animated.View>
             )}
@@ -86,8 +86,8 @@ export default function SignInScreen() {
                 autoCapitalize="none"
                 placeholderTextColor="#aaa"
             />
-            <Button title="Sign In" onPress={handleSignIn}/>
-            {isLoading && <ActivityIndicator color={"blue"}/>}
+            <Button title="Sign In" onPress={handleSignIn} />
+            {isLoading && <ActivityIndicator color={"blue"} />}
         </ImageBackground>
     )
 }

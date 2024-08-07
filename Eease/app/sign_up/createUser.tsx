@@ -51,7 +51,7 @@ export default function CreateUser() {
                 console.warn(error)
             } else {
                 console.log(data)
-                router.navigate("(tabs)")
+                router.navigate("sign_up/ReceptorPreferences")
             }
         } else {
             showAlert()

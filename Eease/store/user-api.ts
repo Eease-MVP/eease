@@ -19,6 +19,7 @@ export interface User {
         placesToAvoid: Array<string>
     }
 }
+
 export interface SignInResponse {
     accessToken: string
 }
@@ -65,10 +66,6 @@ export const userApi = createApi({
             }),
         }),
         signIn: builder.mutation<SignInResponse, SignInUpRequest>({
-            transformErrorResponse: (value) => {
-                console.log(value)
-                return value
-            },
             query: (credentials) => ({
                 url: '/auth/sign_in',
                 method: 'POST',
@@ -78,7 +75,6 @@ export const userApi = createApi({
                 try {
                     const {data} = await queryFulfilled
                     await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, data.accessToken)
-                    const token = await SecureStore.getItemAsync(ACCESS_TOKEN_KEY)
                 } catch (error) {
                     console.log('Sign-in failed:', error)
                 }

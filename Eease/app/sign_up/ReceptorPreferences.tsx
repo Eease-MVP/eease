@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View} from "react-native";
+import {ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View} from "react-native";
 import {useRouter} from "expo-router";
 import {Slider} from '@miblanchard/react-native-slider';
 import {CheckBox} from "react-native-elements";
@@ -10,7 +10,6 @@ import {useFetchUserQuery, User, useUpdateUserMutation} from "@/store/user-api";
 const genders = Object.values(Gender)
 
 const ReceptorPreferences = () => {
-    const b = useFetchUserQuery()
     const {data: user, error, isLoading, refetch} = useFetchUserQuery()
     const [updateUser, {isLoading: isUpdating, error: updateError, isSuccess}] = useUpdateUserMutation()
 
@@ -104,6 +103,8 @@ const ReceptorPreferences = () => {
             <Pressable style={styles.button} onPress={handleSavePreferences}>
                 <Text style={styles.buttonText}>Save Preferences</Text>
             </Pressable>
+
+        {isUpdating && <ActivityIndicator/>}
         </ScrollView>
     );
 };
