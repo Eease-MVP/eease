@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/store/user-slice';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { useFetchUserQuery } from '@/store/user-api';
 
 export default function Dashboard() {
-    const user = useSelector((state: RootState) => state.user);
+    const { data: user, error: fetchError, isLoading: isFetching, refetch } = useFetchUserQuery()
 
     const [userStatus, setUserStatus] = useState<string>("Active");
     const [pickerVisible, setPickerVisible] = useState<boolean>(false);
@@ -29,11 +28,11 @@ export default function Dashboard() {
         <View style={styles.container}>
             <View style={styles.profileContainer}>
                 <View style={styles.profilePic}>
-                    <AntDesign name="user" size={24} color="black" />                            
+                    <AntDesign name="user" size={24} color="black" />
                 </View>
                 <View>
                     <Text style={styles.welcomeText}>Welcome</Text>
-                    <Text>{user.username}!</Text>
+                    <Text>{user?.name}!</Text>
                 </View>
             </View>
             <View style={styles.statusContainer}>
@@ -48,11 +47,10 @@ export default function Dashboard() {
             {pickerVisible && (
                 <View style={styles.dropdown}>
                     {Object.keys(statuses).map((status) => (
-                        <TouchableOpacity 
-                            key={status} 
-                            onPress={() => handleStatusChange(status)} 
-                            style={styles.dropdownItem}
-                        >
+                        <TouchableOpacity
+                            key={status}
+                            onPress={() => handleStatusChange(status)}
+                            style={styles.dropdownItem} >
                             <Text>{status}</Text>
                         </TouchableOpacity>
                     ))}
@@ -64,7 +62,7 @@ export default function Dashboard() {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: "#ECECEC", 
+        backgroundColor: "#ECECEC",
         alignItems: 'center',
         padding: 20,
         width: "70%",
@@ -77,9 +75,9 @@ const styles = StyleSheet.create({
     profilePic: {
         width: 50,
         height: 50,
-        borderRadius: 25, 
+        borderRadius: 25,
         backgroundColor: "#C7C7C7",
-        marginRight: 10, 
+        marginRight: 10,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -100,7 +98,7 @@ const styles = StyleSheet.create({
     status: {
         width: 40,
         height: 40,
-        borderRadius: 100, 
+        borderRadius: 100,
         marginLeft: 10,
         marginRight: 10,
     },
