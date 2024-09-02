@@ -1,14 +1,14 @@
-import {ImageBackground, StyleSheet} from "react-native"
-import {ReactNode} from "react";
+import {ImageBackground, StyleProp, StyleSheet, ViewStyle} from "react-native"
+import {PropsWithChildren, ReactNode} from "react";
 
 const background = require("../assets/images/background.jpg")
-type EeaseBackgroundProps = {
-    children: ReactNode;
-};
+type EeaseBackgroundProps = PropsWithChildren<{
+    style?: StyleProp<ViewStyle>
+}>
 
-export default function EeaseBackground({children}: EeaseBackgroundProps) {
+export default function EeaseBackground({children, style}: EeaseBackgroundProps) {
     return (
-        <ImageBackground source={background} style={styles.background}>
+        <ImageBackground source={background} style={[styles.background, style]}>
             {children}
         </ImageBackground>
     )
