@@ -33,9 +33,10 @@ export default function RootLayout() {
                         <Stack.Screen name="index" options={{headerShown: false}}/>
                         <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
                         <Stack.Screen name="+not-found"/>
-                        <Stack.Screen name="sign" options={{headerShown: false}}/>
+                        <Stack.Screen name="welcome" options={{headerShown: false}}/>
                         <Stack.Screen name="sign_in" options={{headerShown: false}}/>
                         <Stack.Screen name="sign_up" options={{headerShown: false}}/>
+                        <Stack.Screen name="profile" options={{headerShown: false}}/>
                         <Stack.Screen name="payment_ui/PaymentScreen" options={{title: "Payment"}}/>
                     </Stack>
                 </ThemeProvider>

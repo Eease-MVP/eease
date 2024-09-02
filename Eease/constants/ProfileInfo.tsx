@@ -1,16 +1,31 @@
 // helper functions
 
-function getValueLabelFromEnum(enumObj: any, value: any) {
-    return value ? {value: getEnumKeyByValue(enumObj, value), label: value.toString()} : undefined;
-}
+export namespace EnumUtils {
+// Generic function to get the enum key by its value
+    export function getKeyOf<T extends Record<string, string | number>>(
+        enumObj: T,
+        value: T[keyof T],
+    ): keyof T {
+        return Object.keys(enumObj).find(key => enumObj[key as keyof T] === value) as keyof T;
+    }
 
-function getEnumKeyByValue(enumObj: any, value: string): string {
-    return Object.keys(enumObj).find(key => enumObj[key] === value) as string;
-}
+// Generic function to parse a string into the corresponding enum value
+    export function parse<T extends Record<string, string | number>>(
+        enumObj: T,
+        value: keyof T,
+    ): T[keyof T] {
+        return enumObj[value];
+    }
 
-function parseEnum(enumObj: any, value: string): any {
-    const key = Object.keys(enumObj).find(key => key === value);
-    return enumObj[key as keyof typeof enumObj];
+// Generic function to get value-label pairs from an enum
+    export function getValueLabel<T extends Record<string, string | number>>(
+        enumObj: T,
+        value: T[keyof T],
+    ): { value: keyof T, label: string } {
+        const key = getKeyOf(enumObj, value);
+        return {value: key, label: value.toString()}
+    }
+
 }
 
 // Gender
@@ -21,22 +36,9 @@ export enum Gender {
     TRANSGENDER = 'Transgender',
 }
 
-export namespace GenderUtils {
-    export function getKey(gender: Gender): string {
-        return getEnumKeyByValue(Gender, gender);
-    }
-
-    export function parse(gender: string): Gender {
-        return parseEnum(Gender, gender);
-    }
-
-    export function getValueLabel(gender: Gender | undefined) {
-        return getValueLabelFromEnum(Gender, gender);
-    }
-}
-
-export const genders = Object.entries(Gender)
-    .map(([key, gender]) => ({value: key, label: gender.toString()}))
+export const allGenders = Object
+    .values(Gender)
+    .map(gender => EnumUtils.getValueLabel(Gender, gender))
 
 // Language enum
 
@@ -227,20 +229,7 @@ export enum Language {
     zu = 'Zulu',
 }
 
-export namespace LanguageUtils {
-    export function getKey(language: Language): string {
-        return getEnumKeyByValue(Language, language);
-    }
-
-    export function parse(language: string): Language {
-        return parseEnum(Language, language);
-    }
-
-    export function getValueLabel(language: Language | undefined) {
-        return getValueLabelFromEnum(Language, language);
-    }
-}
-
-export const languages = Object.entries(Language)
-    .map(([key, value]) => ({value: key, label: value.toString()}))
+export const allLanguages = Object
+    .values(Language)
+    .map(language => EnumUtils.getValueLabel(Language, language))
 

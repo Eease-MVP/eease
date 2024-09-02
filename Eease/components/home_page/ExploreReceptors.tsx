@@ -1,55 +1,59 @@
-import { StyleSheet, Text, View, ScrollView } from "react-native";
+import {ScrollView, StyleSheet, Text, View} from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
+import ViewWithTitle from "@/components/ViewWithTitle";
+import {EeasyCard} from "@/components/EeasyCard";
+import EeaseButton from "@/components/EeaseButton";
 
 export default function ExploreReceptors() {
     const receptors: { [key: string]: string }[] = [
         {
             "name": "Receptor 1",
             "age": "22",
-            "category": "Loss"
+            "category": "Loss",
         },
         {
             "name": "Receptor 2",
             "age": "30",
-            "category": "Loss"
+            "category": "Loss",
         },
         {
             "name": "Receptor 3",
             "age": "25",
-            "category": "Loneliness"
+            "category": "Loneliness",
         },
         {
             "name": "Receptor 4",
             "age": "27",
-            "category": "Loss"
-        }
+            "category": "Loss",
+        },
     ];
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.containerTitle}>Explore receptors</Text>
-            <ScrollView horizontal={true} style={styles.scrollView}>
+        <ViewWithTitle title="Explore Receptors">
+            <ScrollView horizontal={true}
+                        contentContainerStyle={{gap: 8, paddingHorizontal: 16}}>
                 {receptors.map((receptor, index) => (
-                    <View key={index} style={styles.receptor}>
-                        <View style={styles.innerReceptorContainer}>
-                            <View>
-                                <Text style={styles.receptorName}>{receptor.name}</Text>
-                                <Text>Age: {receptor.age}</Text>
-                                <Text>Category: {receptor.category}</Text>
+                    <View key={index} >
+                        <EeasyCard style={{gap: 8, paddingVertical: 16, borderWidth: StyleSheet.hairlineWidth}} >
+                            <View style={styles.innerReceptorContainer}>
+                                <View>
+                                    <Text style={styles.receptorName}>{receptor.name}</Text>
+                                    <Text>Age: {receptor.age}</Text>
+                                    <Text>Category: {receptor.category}</Text>
+                                </View>
+                                <View style={styles.rightContainer}>
+                                    <AntDesign name="user" size={24} color="black"/>
+                                </View>
                             </View>
-                            <View style={styles.rightContainer}>                    
-                                <AntDesign name="user" size={24} color="black" />                            
-                            </View>
-                        </View>
-                        <View style={styles.connectBtnContainer}>
-                            <View style={styles.connectBtn}>
-                                <Text>Connect</Text>
-                            </View>
-                        </View>
+                            <EeaseButton
+                                onPress={() =>{}}
+                                title="Connect"
+                            buttonStyle={{width: "100%"}}/>
+                        </EeasyCard>
                     </View>
                 ))}
             </ScrollView>
-        </View>
+        </ViewWithTitle>
     );
 }
 
@@ -57,10 +61,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: "center",
-        padding: 10,
-    },
-    scrollView: {
-        flexDirection: "row",
     },
     receptor: {
         margin: 10,
@@ -78,9 +78,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     rightContainer: {
-        marginLeft: "auto",
-        backgroundColor: "#C7C7C7",
         padding: 10,
+        borderWidth: StyleSheet.hairlineWidth,
         borderRadius: 100,
     },
     connectBtnContainer: {
@@ -99,11 +98,11 @@ const styles = StyleSheet.create({
     receptorName: {
         fontSize: 18,
         fontWeight: "700",
-        marginBottom: 10
+        marginBottom: 10,
     },
     containerTitle: {
         textAlign: "center",
         fontSize: 25,
-        marginBottom: 20
-    }
+        marginBottom: 20,
+    },
 });

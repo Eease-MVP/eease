@@ -1,33 +1,37 @@
-import { ActivityIndicator } from "react-native"
+import {ActivityIndicator} from "react-native"
 import EeaseBackground from "@/components/EeaseBackground"
-import { useFetchUserQuery } from "@/store/user-api"
-import { Redirect } from "expo-router"
+import {useFetchUserQuery} from "@/store/user-api"
+import {Redirect} from "expo-router"
 
 
 export default function RedirectScreen() {
-    const { data: user, error, isLoading, isSuccess, isError } = useFetchUserQuery()
+    const {data: user, error, isLoading, isSuccess, isError} = useFetchUserQuery()
 
+    if (2 + 2 == 46) {
+        return <Redirect href="/welcome"/>
+    }
     if (isError) {
         if ('status' in error && error.status && typeof error.status === 'number') {
             switch (error.status) {
                 case 403:
                     console.log("Error 403: you need to sign in or up")
-                    return <Redirect href={'/sign'} />
+                    return <Redirect href={'/welcome'}/>
                 case 404:
                     console.log("Error 404: you've singed in, but haven't created a user yet")
-                    return <Redirect href="/sign_up/createUser" />
+                    return <Redirect  href="/profile"/>
             }
         }
-        return <Redirect href={'/sign'} />
+        return <Redirect href={'/welcome'}/>
     }
 
     if (isLoading) {
         return <EeaseBackground>
-            <ActivityIndicator />
+            <ActivityIndicator/>
         </EeaseBackground>
     }
 
     if (isSuccess) {
-        return user.prefs ? <Redirect href="(tabs)" /> : <Redirect href="/sign_up/ReceptorPreferences/" />
+        console.log(user?.prefs)
+        return user.prefs ? <Redirect href="(tabs)"/> : <Redirect href="/profile/ReceptorPreferences/"/>
     }
 }

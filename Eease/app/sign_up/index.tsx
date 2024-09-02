@@ -3,19 +3,19 @@ import {useEffect, useRef, useState} from "react"
 import {useRouter} from "expo-router"
 import {useSignInMutation, useSignUpMutation} from "@/store/user-api"
 import {getErrorMessage, validateEmail} from "@/app/sign_up/signUtils";
+import EeaseBackground from "@/components/EeaseBackground";
 
 
 export default function SignInScreen() {
-    const testUser = {email: 'john.doe@example.com', password: 'password123'}
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
-    //const [isLoading, setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const fadeAnim = useRef(new Animated.Value(0)).current
 
     const [signUp, {isLoading: isSigningUp}] = useSignUpMutation()
     const [signIn, {isLoading: isSigningIn}] = useSignInMutation()
+
     useEffect(() => {
         if (errorMessage) {
             Animated.timing(fadeAnim, {
@@ -52,13 +52,14 @@ export default function SignInScreen() {
             } else {
                 setErrorMessage(null)
                 router.dismissAll()
-                router.replace("/sign_up/createUser")
+                console.log("Go to /sign_up")
+                router.replace("/profile")
             }
         }
     }
 
     return (
-        <View style={styles.background}>
+        <EeaseBackground style={styles.background}>
             {errorMessage && (
                 <Animated.View style={{...styles.errorContainer, opacity: fadeAnim}}>
                     <Text style={styles.errorText}>{errorMessage}</Text>
@@ -92,17 +93,12 @@ export default function SignInScreen() {
             {isSigningIn && <Text>Creating user..</Text>}
             {isSigningUp && <Text>Signing in...</Text>}
             {isSigningIn || isSigningUp && <ActivityIndicator color={"blue"}/>}
-        </View>
+        </EeaseBackground>
     )
 }
 
 const styles = StyleSheet.create({
     background: {
-        flex: 1,
-        width: "100%",
-        height: "100%",
-        alignItems: "center",
-        justifyContent: "center",
         gap: 10,
     },
     input: {

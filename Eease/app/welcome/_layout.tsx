@@ -1,8 +1,8 @@
 import React from 'react';
 import {useColorScheme} from '@/hooks/useColorScheme';
-import SignInUpScreen from "@/app/sign/index";
+import WelcomeScreen from "@/app/welcome/index";
 
 
 export default function SignLayout() {
-    return <SignInUpScreen/>;
+    return <WelcomeScreen/>;
 }

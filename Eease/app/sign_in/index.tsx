@@ -3,8 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "expo-router";
 import { useSignInMutation } from "@/store/user-api";
 import { getErrorMessage, validateEmail } from "@/app/sign_up/signUtils";
-
-const background = require("../../assets/images/background.jpg")
+import EeaseBackground from "@/components/EeaseBackground";
 
 // naive email validator
 
@@ -56,7 +55,7 @@ export default function SignInScreen() {
     };
 
     return (
-        <ImageBackground source={background} style={styles.background}>
+        <EeaseBackground style={styles.background}>
             {errorMessage && (
                 <Animated.View style={{ ...styles.errorContainer, opacity: fadeAnim }}>
                     <Text style={styles.errorText}>{errorMessage}</Text>
@@ -88,19 +87,12 @@ export default function SignInScreen() {
             />
             <Button title="Sign In" onPress={handleSignIn} />
             {isLoading && <ActivityIndicator color={"blue"} />}
-        </ImageBackground>
+        </EeaseBackground>
     )
 }
 
 const styles = StyleSheet.create({
-    background: {
-        flex: 1,
-        width: "100%",
-        height: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 10,
-    },
+    background: {gap: 10,},
     input: {
         width: 256,
         height: 40,

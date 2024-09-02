@@ -1,6 +1,6 @@
 import React from 'react';
 import {useColorScheme} from '@/hooks/useColorScheme';
-import SignInUpScreen from "@/app/sign/index";
+import WelcomeScreen from "@/app/welcome/index";
 import {Stack} from "expo-router";
 
 

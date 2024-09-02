@@ -43,8 +43,7 @@ export default function ReduxProvider({children}: ReduxProviderProps) {
         <Provider store={store}>
             <PersistGate
                 loading={<ActivityIndicator size="large" color="#0000ff"/>}
-                persistor={persistor}
-            >
+                persistor={persistor}>
                 {children}
             </PersistGate>
         </Provider>

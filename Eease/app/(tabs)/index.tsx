@@ -1,34 +1,30 @@
-import React from 'react';
-import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
-import Dashboard from '@/components/home_page/Dashboard';
-import HomePageNav from '@/components/home_page/HomePageNav';
-import ReceptorPreferencesDisplay from '@/components/home_page/ReceptorPreferencesDisplay';
-import ExploreReceptors from '@/components/home_page/ExploreReceptors';
-import {useFetchUserQuery} from "@/store/user-api";
+import React from 'react'
+import {ScrollView, StyleSheet, View} from 'react-native'
+import Dashboard from '@/components/home_page/Dashboard'
+import HomePageNav from '@/components/home_page/HomePageNav'
+import ReceptorPreferencesDisplay from '@/components/home_page/ReceptorPreferencesDisplay'
+import ExploreReceptors from '@/components/home_page/ExploreReceptors'
 
-export default function Home() {
+export default function HomeTab() {
 
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <HomePageNav />
-        <Dashboard />
-        <ReceptorPreferencesDisplay />
-        <ExploreReceptors />
-      </ScrollView>
-    </SafeAreaView>
-  )
+    return (
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <HomePageNav/>
+            <View style={{gap: 24, paddingHorizontal: 24}}>
+                <Dashboard/>
+                <ReceptorPreferencesDisplay/>
+            </View>
+            <ExploreReceptors/>
+        </ScrollView>
+    )
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  scrollContainer: {
-    alignItems: 'center',
-    paddingVertical: 20,
-    gap: 40,
-    backgroundColor: 'white',
-  },
-});
+    scrollContainer: {
+        alignItems: 'center',
+        paddingVertical: 24,
+        gap: 24,
+        backgroundColor: '#fff',
+        flexGrow: 1,
+    },
+})

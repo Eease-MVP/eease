@@ -6,8 +6,6 @@ import {
   FlatList,
   TextInput,
   TouchableOpacity,
-  StatusBar,
-  SafeAreaView,
 } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 
@@ -32,8 +30,7 @@ const Item = ({ name, status }: { name: string; status: string }) => (
 
 export default function Connections() {
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+    <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Connections</Text>
         <TouchableOpacity style={styles.iconButton}>
@@ -74,7 +71,7 @@ export default function Connections() {
           <Ionicons name="settings" size={24} color="grey" />
         </TouchableOpacity> */}
       </View>
-    </SafeAreaView>
+    </View>
   )
 }
 

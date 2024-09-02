@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import React, {useState} from 'react';
+import {Modal, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import {EeasyCard} from "@/components/EeasyCard";
+import EeaseButton from "@/components/EeaseButton";
 
 const categoryInfo: { [key: string]: string } = {
     'Body-related': 'Information about body-related issues.',
@@ -8,7 +10,7 @@ const categoryInfo: { [key: string]: string } = {
     'Loneliness, exclusion and belonging': 'Information about loneliness, exclusion, and belonging.',
     'Finances, work and studies': 'Information about finances, work, and studies.',
     'Relationships': 'Information about relationships.',
-    'Mental health': 'Information about mental health.'
+    'Mental health': 'Information about mental health.',
 };
 
 export default function ReceptorPreferencesDisplay() {
@@ -21,19 +23,21 @@ export default function ReceptorPreferencesDisplay() {
     };
 
     return (
-        <View style={styles.container}>
+        <EeasyCard style={{gap: 8}}>
             <View style={styles.textContainer}>
                 <Text style={styles.leftText}>Receptor preferences</Text>
                 <TouchableOpacity>
                     <Text style={styles.rightText}>More information</Text>
                 </TouchableOpacity>
             </View>
-            <ScrollView horizontal={true} style={styles.categories}>
+            <ScrollView horizontal={true}
+                        contentContainerStyle={{gap: 8}}
+                        style={styles.categories}>
                 {Object.keys(categoryInfo).map(category => (
                     <View style={styles.textCategoryContainer} key={category}>
                         <Text style={styles.categoryText}>{category}</Text>
                         <TouchableOpacity onPress={() => handleInfoPress(category)}>
-                            <AntDesign name="questioncircleo" size={15} color="black" />
+                            <AntDesign name="questioncircleo" size={15} color="black"/>
                         </TouchableOpacity>
                     </View>
                 ))}
@@ -47,58 +51,42 @@ export default function ReceptorPreferencesDisplay() {
             >
                 <View style={styles.modalBackground}>
                     <View style={styles.modalContainer}>
-                        <Text style={styles.modalText}>{selectedCategory} Information</Text>
+                        <Text style={styles.modalText}>{selectedCategory} information!</Text>
                         <Text style={styles.modalText}>{categoryInfo[selectedCategory]}</Text>
-                        <TouchableOpacity
-                            style={styles.closeButton}
-                            onPress={() => setModalVisible(false)}
-                        >
-                            <Text style={styles.closeButtonText}>Close</Text>
-                        </TouchableOpacity>
+                        <EeaseButton onPress={() => setModalVisible(false)} title="OK"/>
                     </View>
                 </View>
             </Modal>
-        </View>
+        </EeasyCard>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        backgroundColor: "#ECECEC", 
-        alignItems: 'center',
-        padding: 20,
-        width: "100%",
-        marginLeft: "auto",
-        marginRight: "auto",
-        borderRadius: 5
-    },
     textContainer: {
         flexDirection: "row",
         justifyContent: 'space-between',
-        width: '100%'
+        width: '100%',
     },
     leftText: {
         textAlign: 'left',
-        fontSize: 16
+        fontSize: 16,
     },
     rightText: {
         textAlign: 'right',
-        textDecorationLine: "underline"
+        textDecorationLine: "underline",
     },
     categories: {
-        marginTop: 10,
-        width: '110%'
+        flexGrow: 0,
     },
     textCategoryContainer: {
-        backgroundColor: "#C7C7C7",
         borderRadius: 25,
         padding: 10,
+        borderWidth: StyleSheet.hairlineWidth,
         flexDirection: "row",
-        marginRight: 15,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     categoryText: {
-        marginRight: 5
+        marginRight: 5,
     },
     modalBackground: {
         flex: 1,
@@ -126,5 +114,5 @@ const styles = StyleSheet.create({
     closeButtonText: {
         color: 'white',
         fontSize: 16,
-    }
+    },
 });

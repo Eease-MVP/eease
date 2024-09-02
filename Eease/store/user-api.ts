@@ -1,6 +1,7 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'
 import * as SecureStore from 'expo-secure-store'
-import {Gender, Language} from "@/constants/ProfileInfo"
+import {EnumUtils, Gender, Language} from "@/constants/ProfileInfo"
+import {ResultType} from "@remix-run/router/utils";
 
 const ACCESS_TOKEN_KEY = 'access_token'
 const BASE_URL = 'http://192.168.1.122:8080/api'
@@ -12,12 +13,14 @@ export interface User {
     gender: Gender
     birthDate: string
     languages: Array<Language>
-    prefs?: {
-        ageFrom: number
-        ageTo: number
-        genders: Array<Gender>
-        placesToAvoid: Array<string>
-    }
+    prefs?: Prefs
+}
+
+export interface Prefs {
+    ageFrom: number
+    ageTo: number
+    genders: Array<Gender>
+    placesToAvoid: Array<string>
 }
 
 export interface SignInResponse {
@@ -57,6 +60,7 @@ const baseQuery = fetchBaseQuery({
 export const userApi = createApi({
     reducerPath: 'api',
     baseQuery: baseQuery,
+    tagTypes: ['User'],
     endpoints: builder => ({
         signUp: builder.mutation<void, SignInUpRequest>({
             query: (credentials) => ({
@@ -82,9 +86,11 @@ export const userApi = createApi({
         }),
         fetchUser: builder.query<User, void>({
             query: () => '/user',
+            keepUnusedDataFor: 1,
             transformResponse(json: UserJson) {
                 return transformUserJsonToUser(json)
             },
+            providesTags: ["User"],
         }),
         updateUser: builder.mutation<User, User>({
             query: (user) => ({
@@ -95,6 +101,7 @@ export const userApi = createApi({
             transformResponse(json: UserJson) {
                 return transformUserJsonToUser(json)
             },
+            invalidatesTags: ["User"],
         }),
     }),
 })
@@ -112,12 +119,12 @@ const transformUserJsonToUser = (userJson: UserJson): User => {
     return {...userJson, gender, languages, prefs: userPrefs}
 }
 const transformUserToUserJson = (user: User): UserJson => {
-    const gender = (Object.keys(Gender) as Array<keyof typeof Gender>).find(key => Gender[key] === user.gender) as keyof typeof Gender
-    const languages = user.languages.map(language => (Object.keys(Language) as Array<keyof typeof Language>).find(key => Language[key] === language) as keyof typeof Language)
+    const gender = EnumUtils.getKeyOf(Gender, user.gender)
+    const languages = user.languages.map(language => EnumUtils.getKeyOf(Language, language))
     const userPrefs = user.prefs
         ? {
             ...user.prefs,
-            genders: user.prefs.genders.map(gender => (Object.keys(Gender) as Array<keyof typeof Gender>).find(key => Gender[key] === gender) as keyof typeof Gender),
+            genders: user.prefs.genders.map(gender => EnumUtils.getKeyOf(Gender, gender)),
         }
         : undefined
     return {...user, gender, languages, prefs: userPrefs}

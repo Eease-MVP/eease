@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import React, {useEffect, useState} from 'react';
+import {Image, Pressable, StyleSheet, Text, View} from "react-native";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import * as ImagePicker from 'expo-image-picker';
 
 export default function UploadProfilePic() {
-    const [image, setImage] = useState<string | null>(null); 
+    const [image, setImage] = useState<string | null>(null);
 
     const checkForCameraRollPermission = async () => {
-        const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
+        const {status} = await ImagePicker.getMediaLibraryPermissionsAsync();
+        console.log(status);
         if (status !== 'granted') {
             alert("Please grant camera roll permissions inside your system's settings");
         } else {
@@ -35,12 +36,12 @@ export default function UploadProfilePic() {
 
     return (
         <View style={styles.container}>
-            {image && <Image source={{ uri: image }} style={{ width: 80, height: 80 }} />}
+            {image && <Image source={{uri: image}} style={{width: 80, height: 80}}/>}
             <View style={styles.uploadBtnContainer}>
-                <TouchableOpacity onPress={addImage} style={styles.uploadBtn}>
-                    <Text style={styles.uploadBtnText}>{image ? 'Edit' : 'Upload'} Image</Text>
-                    <AntDesign name="camerao" size={16} color="black" />
-                </TouchableOpacity>
+                <Pressable onPress={addImage} style={styles.uploadBtn}>
+                    <AntDesign name="camerao" size={16} color="white"/>
+                    <Text style={styles.uploadBtnText}>{image ? 'Edit' : 'Upload'}</Text>
+                </Pressable>
             </View>
         </View>
     );
@@ -48,12 +49,11 @@ export default function UploadProfilePic() {
 
 const styles = StyleSheet.create({
     container: {
-        elevation: 2,
         height: 80,
         width: 80,
-        backgroundColor: '#efefef',
-        position: 'relative',
-        borderRadius: 999,
+        borderRadius: 100,
+        borderColor: "#460E0EB6",
+        borderWidth: 2,
         overflow: 'hidden',
     },
     uploadBtnContainer: {
@@ -63,17 +63,20 @@ const styles = StyleSheet.create({
         bottom: 0,
         backgroundColor: 'lightgrey',
         width: '100%',
-        height: '40%',
+        height: '33%',
         alignItems: 'center',
         justifyContent: 'center',
     },
     uploadBtn: {
         display: 'flex',
+        flexDirection: 'row',
+        gap: 4,
         alignItems: "center",
         justifyContent: 'center',
     },
     uploadBtnText: {
         fontSize: 10,
-        textAlign: 'center',
+        fontWeight: "bold",
+        color: 'white',
     },
 });
