@@ -9,8 +9,6 @@ from datetime import timedelta
 from contextlib import asynccontextmanager
 from .auth_service import authenticate_user, get_current_user
 from .models.models import Base
-from .schemas.user import User, UserCreate
-
 
 # uvicorn app.main:app --reload
 
