@@ -9,6 +9,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
 
 @EnableWebSecurity
 @Configuration
@@ -20,10 +24,6 @@ class SecurityConfig(
         http: HttpSecurity,
         jwtAuthenticationFilter: JwtAuthenticationFilter,
     ): SecurityFilterChain = with(http) {
-
-        //  uncomment in order to be able to access H2 console through http://localhost:8080/h2-console/
-        //  headers { headers -> headers.frameOptions(Customizer.withDefaults()).disable() }
-
         csrf { csrf -> csrf.disable() }
         authorizeHttpRequests { authorize ->
             authorize
@@ -35,4 +35,11 @@ class SecurityConfig(
         addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
         build()
     }
+
+    @Bean
+    fun securityPasswordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+
+    @Bean
+    fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager = 
+        config.authenticationManager
 }

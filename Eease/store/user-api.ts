@@ -4,7 +4,7 @@ import {EnumUtils, Gender, Language} from "@/constants/ProfileInfo"
 import {ResultType} from "@remix-run/router/utils";
 
 const ACCESS_TOKEN_KEY = 'access_token'
-const BASE_URL = 'http://192.168.1.122:8080/api'
+const BASE_URL = 'http://localhost:8080/api';
 // for testing purpose. Uncomment if you want to clear all the data
 // SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY)
 
