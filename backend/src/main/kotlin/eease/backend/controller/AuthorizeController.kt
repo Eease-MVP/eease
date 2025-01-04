@@ -12,12 +12,14 @@ class AuthorizeController(
     private val authenticationService: AuthenticationService,
 ) {
     @PostMapping("/sign_up")
-    fun signUp(
-        @RequestBody signUpRequest: SignRequest,
-    ) = authenticationService.signUp(
+fun signUp(@RequestBody signUpRequest: SignRequest) {
+    println("Received sign-up request: $signUpRequest")
+    authenticationService.signUp(
         email = signUpRequest.email,
         password = signUpRequest.password,
     )
+}
+
 
     @PostMapping("/sign_in")
     fun signIn(
