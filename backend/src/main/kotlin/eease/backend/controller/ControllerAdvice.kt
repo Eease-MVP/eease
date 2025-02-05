@@ -1,45 +1,49 @@
 package eease.backend.controller
 
+import eease.backend.model.ErrorResponse
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.authentication.BadCredentialsException
-import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
-class ControllerAdvice /*: ResponseEntityExceptionHandler()*/ {
+class ControllerAdvice {
+    private val logger = LoggerFactory.getLogger(ControllerAdvice::class.java)
 
     @ExceptionHandler(EmailAlreadyExistsException::class)
-    fun handle(ex: EmailAlreadyExistsException) = ResponseEntity(
-        ErrorResponse(HttpStatus.CONFLICT, ex.message),
+    fun handleEmailExists(ex: EmailAlreadyExistsException) = ResponseEntity(
+        ErrorResponse(
+            status = HttpStatus.CONFLICT,
+            message = "Email is already registered"
+        ),
         HttpStatus.CONFLICT
     )
 
     @ExceptionHandler(BadCredentialsException::class)
-    fun handle(ex: BadCredentialsException) = ResponseEntity(
-        ErrorResponse(HttpStatus.NOT_FOUND, "Wrong email or password"),
-        HttpStatus.NOT_FOUND
-    )
-
-    @ExceptionHandler
-    fun handle(ex: UsernameNotFoundException) = ResponseEntity(
-        ErrorResponse(HttpStatus.NOT_FOUND, ex.message),
-        HttpStatus.NOT_FOUND
+    fun handleBadCredentials(ex: BadCredentialsException) = ResponseEntity(
+        ErrorResponse(
+            status = HttpStatus.UNAUTHORIZED,
+            message = "Invalid credentials"
+        ),
+        HttpStatus.UNAUTHORIZED
     )
 
     @ExceptionHandler(Exception::class)
-    fun handleGenericException(exception: Exception) = ResponseEntity(
-        ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred: ${exception.message}"),
-        HttpStatus.INTERNAL_SERVER_ERROR
-    )
+    fun handleGenericException(ex: Exception): ResponseEntity<ErrorResponse> {
+        // Log the full error for debugging
+        logger.error("Unexpected error", ex)
+        
+        // Return sanitized response to client
+        return ResponseEntity(
+            ErrorResponse(
+                status = HttpStatus.INTERNAL_SERVER_ERROR,
+                message = "An unexpected error occurred"
+            ),
+            HttpStatus.INTERNAL_SERVER_ERROR
+        )
+    }
 }
 
 class EmailAlreadyExistsException(email: String) : RuntimeException("Email already exists: $email")
-
-
-data class ErrorResponse(
-    val status: HttpStatus,
-    val message: String?,
-    val timestamp: Long = System.currentTimeMillis(),
-)

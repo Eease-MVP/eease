@@ -1,19 +1,44 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react'
 import * as SecureStore from 'expo-secure-store'
 import {EnumUtils, Gender, Language} from "@/constants/ProfileInfo"
-import {ResultType} from "@remix-run/router/utils";
+import {Platform} from 'react-native'
 
 const ACCESS_TOKEN_KEY = 'access_token'
-const BASE_URL = 'http://localhost:8080/api';
-// for testing purpose. Uncomment if you want to clear all the data
-// SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY)
+
+// Simplified base URL configuration
+const getBaseUrl = () => {
+    if (Platform.OS === 'android') {
+        return 'http://10.0.2.2:8080/api'
+    }
+    return 'http://localhost:8080/api'
+}
+
+const BASE_URL = getBaseUrl()
+
+// Simplified storage helper
+const storage = Platform.OS === 'web' 
+    ? {
+        getItem: (key: string) => localStorage.getItem(key),
+        setItem: (key: string, value: string) => localStorage.setItem(key, value),
+        deleteItem: (key: string) => localStorage.removeItem(key),
+    }
+    : {
+        getItem: (key: string) => SecureStore.getItemAsync(key),
+        setItem: (key: string, value: string) => SecureStore.setItemAsync(key, value),
+        deleteItem: (key: string) => SecureStore.deleteItemAsync(key),
+    }
 
 export interface User {
     name: string
     gender: Gender
     birthDate: string
-    languages: Array<Language>
-    prefs?: Prefs
+    languages: Language[]
+    prefs?: {
+        ageFrom: number
+        ageTo: number
+        genders: Gender[]
+        placesToAvoid: string[]
+    }
 }
 
 export interface Prefs {
@@ -45,29 +70,33 @@ interface UserJson {
     }
 }
 
-const baseQuery = fetchBaseQuery({
-    baseUrl: BASE_URL,
-    prepareHeaders: async (headers, {endpoint}) => {
-        // add token, only for those methods that require authentication
-        if (!['signUp', 'signIn'].includes(endpoint)) {
-            const token = await SecureStore.getItemAsync(ACCESS_TOKEN_KEY)
-            if (token) headers.set('authorization', `Bearer ${token}`)
-        }
-        return headers
-    },
-})
-// Define our single API slice object
+// Export the API
 export const userApi = createApi({
     reducerPath: 'api',
-    baseQuery: baseQuery,
+    baseQuery: fetchBaseQuery({
+        baseUrl: BASE_URL,
+        prepareHeaders: async (headers, {endpoint}) => {
+            if (!['signUp', 'signIn'].includes(endpoint)) {
+                const token = await storage.getItem(ACCESS_TOKEN_KEY)
+                if (token) {
+                    headers.set('authorization', `Bearer ${token}`)
+                }
+            }
+            return headers
+        },
+    }),
     tagTypes: ['User'],
-    endpoints: builder => ({
-        signUp: builder.mutation<void, SignInUpRequest>({
+    endpoints: (builder) => ({
+        signUp: builder.mutation<SignInResponse, SignInUpRequest>({
             query: (credentials) => ({
                 url: '/auth/sign_up',
                 method: 'POST',
                 body: credentials,
             }),
+            async onQueryStarted(_, {queryFulfilled}) {
+                const {data} = await queryFulfilled
+                await storage.setItem(ACCESS_TOKEN_KEY, data.accessToken)
+            },
         }),
         signIn: builder.mutation<SignInResponse, SignInUpRequest>({
             query: (credentials) => ({
@@ -76,59 +105,24 @@ export const userApi = createApi({
                 body: credentials,
             }),
             async onQueryStarted(_, {queryFulfilled}) {
-                try {
-                    const {data} = await queryFulfilled
-                    await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, data.accessToken)
-                } catch (error) {
-                    console.log('Sign-in failed:', error)
-                }
+                const {data} = await queryFulfilled
+                await storage.setItem(ACCESS_TOKEN_KEY, data.accessToken)
             },
         }),
         fetchUser: builder.query<User, void>({
             query: () => '/user',
-            keepUnusedDataFor: 1,
-            transformResponse(json: UserJson) {
-                return transformUserJsonToUser(json)
-            },
-            providesTags: ["User"],
+            providesTags: ['User'],
         }),
         updateUser: builder.mutation<User, User>({
             query: (user) => ({
                 url: '/user',
-                method: 'POST',
-                body: transformUserToUserJson(user),
+                method: 'PUT',
+                body: user,
             }),
-            transformResponse(json: UserJson) {
-                return transformUserJsonToUser(json)
-            },
-            invalidatesTags: ["User"],
+            invalidatesTags: ['User'],
         }),
     }),
 })
-
-const transformUserJsonToUser = (userJson: UserJson): User => {
-    const gender = Gender[userJson.gender]
-    const languages = userJson.languages.map(language => Language[language])
-    const userPrefs = userJson.prefs
-        ? {
-            ...userJson.prefs,
-            genders: userJson.prefs.genders.map(genderKey => Gender[genderKey]),
-        }
-        : undefined
-
-    return {...userJson, gender, languages, prefs: userPrefs}
-}
-const transformUserToUserJson = (user: User): UserJson => {
-    const gender = EnumUtils.getKeyOf(Gender, user.gender)
-    const languages = user.languages.map(language => EnumUtils.getKeyOf(Language, language))
-    const userPrefs = user.prefs
-        ? {
-            ...user.prefs,
-            genders: user.prefs.genders.map(gender => EnumUtils.getKeyOf(Gender, gender)),
-        }
-        : undefined
-    return {...user, gender, languages, prefs: userPrefs}
-}
 
 export const {
     useSignUpMutation,
@@ -136,4 +130,7 @@ export const {
     useFetchUserQuery,
     useUpdateUserMutation,
 } = userApi
+
+// Use this for JWT storage
+export const JWT_STORAGE_KEY = process.env.EXPO_PUBLIC_JWT_STORAGE_KEY
 

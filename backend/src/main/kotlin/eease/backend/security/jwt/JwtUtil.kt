@@ -1,18 +1,19 @@
 package eease.backend.security.jwt
 
-import eease.backend.service.EeaseUserDetails
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 import java.util.*
+import javax.crypto.SecretKey
 
 @Component
 class JwtUtil(
     private val jwtProperties: JwtProperties,
 ) {
-    private val secretKey = Keys.hmacShaKeyFor(jwtProperties.key.toByteArray())
+    private val secretKey: SecretKey = Keys.hmacShaKeyFor(
+        jwtProperties.key.toByteArray()
+    )
 
     fun generate(
         id: Long,
@@ -28,30 +29,31 @@ class JwtUtil(
         .signWith(secretKey)
         .compact()
 
-    fun isValid(token: String, userDetails: EeaseUserDetails): Boolean {
-        val id = extractId(token)
-        return userDetails.id == id && !isExpired(token)
-    }
-
-    fun extractId(token: String): Long? = getAllClaims(token).subject?.toLong()
-
-    fun isExpired(token: String): Boolean =
-        getAllClaims(token)
-            .expiration
-            .before(Date(System.currentTimeMillis()))
-
-    private fun getAllClaims(token: String): Claims {
-        val parser = Jwts.parser()
+    fun extractId(token: String): Long? = try {
+        Jwts.parser()
             .verifyWith(secretKey)
             .build()
-        return parser
             .parseSignedClaims(token)
             .payload
+            .subject
+            .toLong()
+    } catch (e: Exception) {
+        null
+    }
+
+    fun extractAllClaims(token: String): Claims = Jwts.parser()
+        .verifyWith(secretKey)
+        .build()
+        .parseSignedClaims(token)
+        .payload
+
+    fun isValid(token: String, id: Long): Boolean {
+        val tokenId = extractId(token)
+        return tokenId == id && !isTokenExpired(token)
+    }
+
+    private fun isTokenExpired(token: String): Boolean {
+        val expiration = extractAllClaims(token).expiration
+        return expiration.before(Date())
     }
 }
-
-@ConfigurationProperties("jwt")
-data class JwtProperties(
-    val key: String,
-    val accessTokenExpiration: Long,
-)

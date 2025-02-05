@@ -40,6 +40,10 @@ dependencies {
 	testImplementation("org.springframework.graphql:spring-graphql-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	implementation("jakarta.servlet:jakarta.servlet-api")
+
+	implementation("org.springframework.security:spring-security-web")
 }
 
 kotlin {

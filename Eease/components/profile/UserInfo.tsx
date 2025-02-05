@@ -5,7 +5,7 @@ import React, {useState} from "react"
 import DropdownSelect from "react-native-input-select/src"
 import ViewWithTitle from "@/components/ViewWithTitle";
 import TextInputWithTitle from "@/components/TextInputWithTitle";
-import EeaseButton from "@/components/EeaseButton";
+import { EeaseButton } from "@/components/EeaseButton";
 
 
 const maximumDate = () => {
@@ -78,7 +78,8 @@ type GenderSelectorProps = {
 }
 
 function GenderPicker({gender, onGenderChange}: GenderSelectorProps) {
-    const genderValue = gender ? EnumUtils.getKeyOf(Gender, gender) : null
+    const genderValue = gender ? EnumUtils.getKeyOf(Gender, gender) : undefined
+    
     return (
         <ViewWithTitle title="Your gender">
             <DropdownSelect

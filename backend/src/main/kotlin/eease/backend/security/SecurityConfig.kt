@@ -9,37 +9,41 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration
+import org.springframework.web.filter.CorsFilter
 
-@EnableWebSecurity
 @Configuration
+@EnableWebSecurity
 class SecurityConfig(
     private val authenticationProvider: AuthenticationProvider,
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter,
+    private val corsFilter: CorsFilter
 ) {
     @Bean
-    fun securityFilterChain(
-        http: HttpSecurity,
-        jwtAuthenticationFilter: JwtAuthenticationFilter,
-    ): SecurityFilterChain = with(http) {
-        csrf { csrf -> csrf.disable() }
-        authorizeHttpRequests { authorize ->
-            authorize
-                .requestMatchers("/api/auth/**", "/h2-console/**", "api/user/all/**").permitAll()
-                .anyRequest().authenticated()
-        }
-        sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-        authenticationProvider(authenticationProvider)
-        addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
-        build()
+    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+        return http
+            .csrf { csrf -> 
+                csrf.disable()
+            }
+            .cors()
+            .and()
+            .authorizeHttpRequests { authorize ->
+                authorize
+                    .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/h2-console/**").permitAll()
+                    .requestMatchers("/health").permitAll()
+                    .anyRequest().authenticated()
+            }
+            .sessionManagement { session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            }
+            .headers { headers ->
+                headers
+                    .frameOptions { frameOptions -> frameOptions.sameOrigin() }
+                    .xssProtection { xss -> xss.disable() }
+            }
+            .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .build()
     }
-
-    @Bean
-    fun securityPasswordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
-
-    @Bean
-    fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager = 
-        config.authenticationManager
 }

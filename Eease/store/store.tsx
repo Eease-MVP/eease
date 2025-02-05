@@ -6,7 +6,7 @@ import {PersistGate} from 'redux-persist/integration/react'
 import {Provider} from 'react-redux'
 import React, {ReactNode} from 'react'
 import {ActivityIndicator} from "react-native"
-import {userApi} from "@/store/user-api"
+import {userApi} from "./user-api"
 
 // for testing purpose. Uncomment if you want to clear all the data
 // AsyncStorage.clear()
@@ -14,6 +14,7 @@ import {userApi} from "@/store/user-api"
 const persistConfig = {
     key: 'root',
     storage: AsyncStorage,
+    blacklist: [userApi.reducerPath] // Don't persist API cache
 }
 
 const rootReducer = combineReducers({
@@ -49,3 +50,7 @@ export default function ReduxProvider({children}: ReduxProviderProps) {
         </Provider>
     )
 }
+
+// Export types
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch

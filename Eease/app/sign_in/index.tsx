@@ -1,117 +1,81 @@
-import { ActivityIndicator, Animated, Button, ImageBackground, StyleSheet, Text, TextInput } from "react-native"
-import { useEffect, useRef, useState } from "react";
-import { useRouter } from "expo-router";
-import { useSignInMutation } from "@/store/user-api";
-import { getErrorMessage, validateEmail } from "@/app/sign_up/signUtils";
-import EeaseBackground from "@/components/EeaseBackground";
-
-// naive email validator
+import { ActivityIndicator, StyleSheet, Text, TextInput, View } from "react-native"
+import { useState } from "react"
+import { useRouter } from "expo-router"
+import { useSignInMutation } from "@/store/user-api"
+import { EeaseButton } from "@/components/EeaseButton"
+import EeaseBackground from "@/components/EeaseBackground"
 
 export default function SignInScreen() {
-
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-
-    //const [isLoading, setLoading] = useState(false)
-    const [errorMessage, setErrorMessage] = useState<string | null>(null)
-    const fadeAnim = useRef(new Animated.Value(0)).current;
-
-    const [signIn, { isLoading }] = useSignInMutation();
-
-    useEffect(() => {
-        if (errorMessage) {
-            Animated.timing(fadeAnim, {
-                toValue: 1,
-                duration: 500,
-                useNativeDriver: true,
-            }).start();
-        } else {
-            fadeAnim.setValue(0);
-        }
-    }, [errorMessage]);
-
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [errorMessage, setErrorMessage] = useState('')
+    
+    const [signIn, { isLoading }] = useSignInMutation()
     const router = useRouter()
 
     const handleSignIn = async () => {
-        setErrorMessage(null)
-
-        if (!validateEmail(email)) {
-            setErrorMessage('Please enter a valid email address.')
+        if (!email || !password) {
+            setErrorMessage('Please fill in all fields')
             return
         }
-        if (password.length < 8) {
-            setErrorMessage('Password must be at least 8 characters long.')
-            return
-        }
-        const { error } = await signIn({ email, password })
-        if (error) {
-            setErrorMessage(getErrorMessage(error))
-        } else {
-            setErrorMessage(null)
-            router.dismissAll()
-            router.replace("(tabs)")
-        }
 
-    };
+        try {
+            await signIn({ email, password }).unwrap()
+            router.replace("/(tabs)")
+        } catch (error) {
+            setErrorMessage('Invalid email or password')
+        }
+    }
 
     return (
-        <EeaseBackground style={styles.background}>
-            {errorMessage && (
-                <Animated.View style={{ ...styles.errorContainer, opacity: fadeAnim }}>
+        <EeaseBackground>
+            <View style={styles.container}>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Email"
+                    value={email}
+                    onChangeText={setEmail}
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                />
+                <TextInput
+                    style={styles.input}
+                    placeholder="Password"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry
+                />
+                {errorMessage ? (
                     <Text style={styles.errorText}>{errorMessage}</Text>
-                </Animated.View>
-            )}
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={email}
-                onChangeText={email => {
-                    setErrorMessage(null)
-                    setEmail(email)
-                }}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                placeholderTextColor="#aaa"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                value={password}
-                onChangeText={password => {
-                    setErrorMessage(null)
-                    setPassword(password)
-                }}
-                secureTextEntry
-                autoCapitalize="none"
-                placeholderTextColor="#aaa"
-            />
-            <Button title="Sign In" onPress={handleSignIn} />
-            {isLoading && <ActivityIndicator color={"blue"} />}
+                ) : null}
+                {isLoading ? (
+                    <ActivityIndicator size="large" color="#0000ff" />
+                ) : (
+                    <EeaseButton 
+                        title="Sign In" 
+                        onPress={handleSignIn}
+                    />
+                )}
+            </View>
         </EeaseBackground>
     )
 }
 
 const styles = StyleSheet.create({
-    background: {gap: 10,},
-    input: {
-        width: 256,
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 12,
-        paddingHorizontal: 8,
-        backgroundColor: '#fff',
-        borderRadius: 4,
+    container: {
+        flex: 1,
+        padding: 20,
+        justifyContent: 'center',
     },
-    errorContainer: {
+    input: {
+        backgroundColor: 'white',
         padding: 10,
-        marginBottom: 20,
-        backgroundColor: 'red',
-        borderRadius: 4,
+        borderRadius: 5,
+        marginBottom: 10,
     },
     errorText: {
-        color: 'white',
-        fontWeight: 'bold',
+        color: 'red',
+        marginBottom: 10,
         textAlign: 'center',
     },
 })

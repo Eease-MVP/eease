@@ -1,26 +1,17 @@
 package eease.backend.model
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import org.springframework.data.jpa.repository.JpaRepository
+import jakarta.persistence.*
 
 @Entity
-class UserCredentials(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
-    var email: String,
-    var hashedPassword: String,
-) {
-    override fun toString(): String {
-        return "email: $email, password: $hashedPassword"
-    }
-}
+@Table(name = "user_credentials")
+data class UserCredentials(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val id: Long? = null,
 
-interface UserCredentialsRepository : JpaRepository<UserCredentials, Long> {
-    fun findUserCredentialsByEmailIgnoreCase(email: String): UserCredentials?
-}
+    @Column(unique = true, nullable = false)
+    val email: String,
 
-
-
+    @Column(nullable = false)
+    val hashedPassword: String,
+)

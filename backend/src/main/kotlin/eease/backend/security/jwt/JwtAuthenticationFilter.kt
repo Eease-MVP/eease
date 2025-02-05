@@ -23,33 +23,27 @@ class JwtAuthenticationFilter(
         filterChain: FilterChain,
     ) {
         val authHeader: String? = request.getHeader("Authorization")
-        if (authHeader == null || authHeader.doesNotContainBearerToken()) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response)
             return
         }
-        val jwtToken = authHeader.extractTokenValue()
-
-        val id = jwt.extractId(jwtToken) ?: return
-
-        if (SecurityContextHolder.getContext().authentication == null) {
-            val foundUser = userDetailsService.loadUserById(id = id) as EeaseUserDetails
-            if (jwt.isValid(jwtToken, foundUser)) updateContext(foundUser, request)
-
-            filterChain.doFilter(request, response)
+        
+        val jwtToken = authHeader.substringAfter("Bearer ")
+        val id = jwt.extractId(jwtToken)
+        
+        if (id != null && SecurityContextHolder.getContext().authentication == null) {
+            val userDetails = userDetailsService.loadUserById(id)
+            if (jwt.isValid(jwtToken, id)) {
+                val authToken = UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    userDetails.authorities
+                )
+                authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
+                SecurityContextHolder.getContext().authentication = authToken
+            }
         }
-    }
-
-    private fun String.doesNotContainBearerToken() = !startsWith("Bearer ")
-
-    private fun String.extractTokenValue() = substringAfter("Bearer ")
-
-    private fun updateContext(foundUser: EeaseUserDetails, request: HttpServletRequest) {
-        val authToken = UsernamePasswordAuthenticationToken.authenticated(
-            /* principal = */ foundUser,
-            /* credentials = */ null,
-            /* authorities = */ foundUser.authorities
-        )
-        authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
-        SecurityContextHolder.getContext().authentication = authToken
+        
+        filterChain.doFilter(request, response)
     }
 }

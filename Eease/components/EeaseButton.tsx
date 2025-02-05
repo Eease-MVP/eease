@@ -1,48 +1,34 @@
-import {GestureResponderEvent, Pressable, StyleProp, StyleSheet, Text, TextStyle, ViewStyle} from "react-native";
+import React from 'react'
+import {StyleSheet, Text, TouchableOpacity, ViewStyle} from 'react-native'
 
-
-type EeaseButtonProps = {
-    onPress: ((event: GestureResponderEvent) => void) | null | undefined
+interface EeaseButtonProps {
     title: string
-    buttonStyle?: StyleProp<ViewStyle>
-    textStyle?: StyleProp<TextStyle>
+    onPress: () => void | Promise<void>
+    buttonStyle?: ViewStyle
 }
 
-export default function EeaseButton({onPress, title, buttonStyle, textStyle}: EeaseButtonProps) {
+export function EeaseButton({title, onPress, buttonStyle}: EeaseButtonProps) {
     return (
-        <Pressable
-            style={({pressed}) => [
-                styles.button,
-                buttonStyle,
-                pressed && styles.buttonPressed, // Apply dynamic style when pressed
-            ]}
-            onPress={onPress}>
-            <Text style={[styles.text, textStyle]}>{title}</Text>
-        </Pressable>
+        <TouchableOpacity
+            style={[styles.button, buttonStyle]}
+            onPress={onPress}
+        >
+            <Text style={styles.text}>{title}</Text>
+        </TouchableOpacity>
     )
 }
 
 const styles = StyleSheet.create({
     button: {
-        alignSelf: "center",
-        alignItems: "center",
-        justifyContent: "center",
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderRadius: 4,
-        elevation: 3,
-        backgroundColor: '#afbcf5',
-
-    },
-    buttonPressed: {
-        backgroundColor: '#6d85f8',
+        backgroundColor: '#ff899a',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     text: {
-        fontSize: 16,
-        lineHeight: 21,
-        fontWeight: 'bold',
-        letterSpacing: 0.25,
         color: 'white',
+        fontSize: 16,
     },
 })
 

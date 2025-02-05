@@ -13,13 +13,24 @@ class UserController(
     private val userService: UserService,
 ) {
     @GetMapping
-    fun getCurrentUser(): ResponseEntity<UserReq> = userService.getCurrentUser()
-        ?.let { ResponseEntity.ok(it) } ?: ResponseEntity.notFound().build()
+    fun getUser(authentication: Authentication): ResponseEntity<User> {
+        val email = authentication.name
+        return userService.getUserByEmail(email)?.let {
+            ResponseEntity.ok(it)
+        } ?: ResponseEntity.notFound().build()
+    }
 
-    @PostMapping
-    fun saveUser(@RequestBody user: UserReq): ResponseEntity<UserReq> = userService.saveUser(user)
-        ?.let { ResponseEntity.ok(it) } ?: ResponseEntity.notFound().build()
-
-    @GetMapping("/all")
-    fun getAllUsers() = userService.getAll()
+    @PutMapping
+    fun updateUser(
+        @RequestBody user: User,
+        authentication: Authentication
+    ): ResponseEntity<User> {
+        val email = authentication.name
+        return try {
+            val updatedUser = userService.updateUser(email, user)
+            ResponseEntity.ok(updatedUser)
+        } catch (e: Exception) {
+            ResponseEntity.badRequest().build()
+        }
+    }
 }

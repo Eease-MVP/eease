@@ -6,6 +6,7 @@ import {
   FlatList,
   TextInput,
   TouchableOpacity,
+  Platform,
 } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 
@@ -102,10 +103,17 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     margin: 16,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 2 },
+    ...Platform.select({
+      web: {
+        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+      },
+      default: {
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 2 },
+      },
+    }),
   },
   searchInput: {
     flex: 1,
