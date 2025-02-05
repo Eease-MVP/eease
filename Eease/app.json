@@ -37,8 +37,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "your-project-id"
+        "projectId": "8e4ef453-8cdd-46c5-a96e-6ce3d9212448"
       }
-    }
+    },
+    "owner": "hifzabatool"
   }
 }
