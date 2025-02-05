@@ -21,7 +21,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.hifzabatool.eease"
+      "package": "com.hifzabatool.eease",
+      "versionCode": 1
     },
     "web": {
       "bundler": "metro",
@@ -34,6 +35,9 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "cli": {
+      "appVersionSource": "local"
     },
     "extra": {
       "eas": {
