@@ -14,14 +14,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.your-name.eease"
+      "bundleIdentifier": "com.hifzabatool.eease"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.your_name.eease"
+      "package": "com.hifzabatool.eease"
     },
     "web": {
       "bundler": "metro",
