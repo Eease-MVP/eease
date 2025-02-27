@@ -5,9 +5,11 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class HealthController {
-    @GetMapping("/health")
+    @GetMapping("/app/health")
     fun healthCheck() = mapOf(
         "status" to "UP",
-        "timestamp" to System.currentTimeMillis()
+         "service" to "Eease Backend",
+        "timestamp" to System.currentTimeMillis(),
+        "version" to "1.0.0"
     )
 } 
