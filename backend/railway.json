@@ -2,10 +2,10 @@
   "schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "./gradlew build"
+    "buildCommand": "./gradlew bootJar"
   },
   "deploy": {
-    "startCommand": "java -jar build/libs/*.jar",
+    "startCommand": "java -jar build/libs/*-boot.jar",
     "healthcheckPath": "/api/health",
     "healthcheckTimeout": 100
   }
