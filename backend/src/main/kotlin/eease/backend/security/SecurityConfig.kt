@@ -20,17 +20,14 @@ class SecurityConfig(
 ) {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        return http
-            .csrf { csrf -> 
-                csrf.disable()
-            }
-            .cors()
-            .and()
+        http
+            .csrf { it.disable() }
+            .cors { }
             .authorizeHttpRequests { authorize ->
                 authorize
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/h2-console/**").permitAll()
-                    .requestMatchers("/health").permitAll()
+                    .requestMatchers("/api/health").permitAll()
                     .anyRequest().authenticated()
             }
             .sessionManagement { session ->
@@ -38,12 +35,13 @@ class SecurityConfig(
             }
             .headers { headers ->
                 headers
-                    .frameOptions { frameOptions -> frameOptions.sameOrigin() }
-                    .xssProtection { xss -> xss.disable() }
+                    .frameOptions { it.sameOrigin() }
+                    .xssProtection { it.disable() }
             }
             .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter::class.java)
             .authenticationProvider(authenticationProvider)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
-            .build()
+        
+        return http.build()
     }
 }
